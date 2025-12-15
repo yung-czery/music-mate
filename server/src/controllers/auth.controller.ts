@@ -30,10 +30,16 @@ export const register = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1d' });
 
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
     res.status(201).json({
       message: 'User created successfully',
       user: { id: user.id, email: user.email, name: user.name },
-      token,
     });
 
   } catch (error) {
@@ -60,7 +66,17 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1d' });
 
-    res.json({ token, user: { id: user.id, email: user.email, name: user.name } });
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    });
+
+    res.json({
+      message: 'Logged in successfully',
+      user: { id: user.id, email: user.email, name: user.name },
+    });
   } catch (error) {
     res.status(500).json({ error: 'Something went wrong' });
   }
