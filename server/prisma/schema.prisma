@@ -1,0 +1,74 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  name      String?
+  spotifyId String? @unique
+
+  // Relacje
+  playlists Playlist[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Track {
+  id         String  @id @default(uuid())
+  spotifyId  String  @unique
+  title      String
+  artist     String
+  album      String
+  coverUrl   String?
+  durationMs Int?
+
+  // Relacja do tabeli łączącej
+  playlists PlaylistTrack[]
+
+  createdAt DateTime @default(now())
+}
+
+model Playlist {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+  isPublic    Boolean @default(false)
+
+  // Relacje
+  userId String
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tracks PlaylistTrack[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Tabela łącząca
+model PlaylistTrack {
+  id String @id @default(uuid())
+
+  playlistId String
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  trackId String
+  track   Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+
+  addedAt DateTime @default(now())
+
+  // Ten sam utwór nie może być dwa razy na tej samej playliście
+  @@unique([playlistId, trackId])
+}
