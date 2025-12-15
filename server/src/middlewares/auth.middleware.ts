@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { AuthUser } from '../types/express';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
@@ -12,7 +13,7 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
   }
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
 
     req.user = { userId: decoded.userId };
 
