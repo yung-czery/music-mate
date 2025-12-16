@@ -48,3 +48,20 @@ export const addTrackToPlaylist = async (
     });
   });
 };
+
+export const removeTrackFromPlaylist = async (userId: string, playlistId: string, trackId: string) => {
+  const playlist = await prisma.playlist.findUnique({
+    where: { id: playlistId },
+  });
+
+  if (!playlist || playlist.userId !== userId) {
+    throw new Error('Forbidden: You do not own this playlist');
+  }
+
+  return prisma.playlistTrack.deleteMany({
+    where: {
+      playlistId: playlistId,
+      trackId: trackId
+    }
+  });
+};
