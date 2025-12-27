@@ -13,15 +13,26 @@ export const importSpotifyPlaylists = async (userId: string, accessToken: string
 
     const operations = spotifyPlaylists.map((sp: any) => {
 
-      // TODO: Ogarnąć duplikaty
+      return tx.playlist.upsert({
+        where: {
+          userId_spotifyId: {
+            userId: userId,
+            spotifyId: sp.id
+          }
+        },
 
-      return tx.playlist.create({
-        data: {
+        update: {
           name: sp.name,
           description: sp.description || 'Zaimportowano ze Spotify',
           isPublic: sp.public || false,
+        },
+
+        create: {
           userId: userId,
-          // spotifyId: sp.id
+          spotifyId: sp.id,
+          name: sp.name,
+          description: sp.description || 'Zaimportowano ze Spotify',
+          isPublic: sp.public || false,
         },
       });
     });
