@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { authenticateToken } from '../middlewares/auth.middleware';
-import { search } from '../controllers/spotify.controller';
+import { loginToSpotify, search, spotifyCallback } from '../controllers/spotify.controller';
 
 const router = Router();
 
-router.use(authenticateToken);
+router.get('/search', authenticateToken, search);
 
-router.get('/search', search);
+router.get('/login', authenticateToken, loginToSpotify);
+router.get('/callback', spotifyCallback);
 
 export default router;
