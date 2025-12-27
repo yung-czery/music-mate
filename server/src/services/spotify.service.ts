@@ -121,3 +121,32 @@ export const fetchUserSpotifyPlaylists = async (accessToken: string) => {
     throw new Error('Could not fetch playlists');
   }
 };
+
+export const fetchPlaylistTracks = async (accessToken: string, spotifyPlaylistId: string) => {
+  let allTracks: any[] = [];
+  let url: string | null = `https://api.spotify.com/v1/playlists/${spotifyPlaylistId}/tracks?limit=50`;
+
+  console.log(`📥 Rozpoczynam pobieranie utworów dla playlisty: ${spotifyPlaylistId}`);
+
+  while (url) {
+    try {
+      const response: any = await axios.get(url, {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+
+      const { items, next } = response.data;
+
+      const validItems = items.filter((item: any) => item.track && item.track.id);
+
+      allTracks = [...allTracks, ...validItems];
+
+      url = next;
+    } catch (error) {
+      console.error('❌ Błąd podczas pobierania strony utworów:', error);
+      throw new Error('Failed to fetch playlist tracks from Spotify');
+    }
+  }
+
+  console.log(`✅ Pobrano łącznie ${allTracks.length} utworów.`);
+  return allTracks;
+};

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { searchTracks } from '../services/spotify.service';
 import * as spotifyService from '../services/spotify.service';
 import * as userService from '../services/user.service';
+import * as playlistService from '../services/playlist.service';
 
 export const search = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -54,5 +55,36 @@ export const spotifyCallback = async (req: Request, res: Response): Promise<void
   } catch (err) {
     console.error(err);
     res.status(500).send('Something went wrong during import');
+  }
+};
+
+export const syncTracks = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // Frontend musi wysłać te 3 rzeczy
+    const { internalPlaylistId, spotifyPlaylistId, accessToken } = req.body;
+
+    const userId = req.user?.userId as string;
+
+    if (!internalPlaylistId || !spotifyPlaylistId || !accessToken) {
+      res.status(400).json({ error: 'Missing: internalPlaylistId, spotifyPlaylistId or accessToken' });
+      return;
+    }
+
+    const rawTracks = await spotifyService.fetchPlaylistTracks(accessToken, spotifyPlaylistId);
+
+    const result = await playlistService.syncSpotifyTracksToPlaylist(
+      userId,
+      internalPlaylistId,
+      rawTracks
+    );
+
+    res.json({
+      message: 'Tracks imported successfully',
+      totalTracksProcessed: result.count
+    });
+
+  } catch (error: any) {
+    console.error('Sync Error:', error);
+    res.status(500).json({ error: error.message || 'Failed to sync tracks' });
   }
 };
