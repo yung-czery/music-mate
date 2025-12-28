@@ -15,12 +15,27 @@ export default defineNuxtConfig({
     '@pinia/nuxt'
   ],
 
-  nitro: {
-    devProxy: {
-      '/api': {
-        target: 'http://localhost:3000/api',
-        changeOrigin: true,
-      }
+  css: ['~/assets/css/main.css'],
+
+  pinia: {
+    storesDirs: ['./app/stores/**'],
+  },
+
+  routeRules: {
+    '/api/_nuxt_icon/**': { proxy: false },
+    '/_nuxt_icon/**': { proxy: false },
+
+    '/api/**': {
+      proxy: 'http://localhost:3000/api/**'
+    }
+  },
+
+  icon: {
+    serverBundle: 'local',
+
+    clientBundle: {
+      scan: true,
+      includeCustomCollections: true,
     }
   },
 
