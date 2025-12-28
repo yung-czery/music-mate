@@ -110,3 +110,13 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+export const logout = (req: Request, res: Response): void => {
+  res.clearCookie('jwt', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
+
+  res.status(200).json({ message: 'Logged out successfully' });
+};
