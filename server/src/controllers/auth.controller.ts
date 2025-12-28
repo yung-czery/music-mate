@@ -81,3 +81,32 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ error: 'Something went wrong' });
   }
 };
+
+export const getMe = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.userId;
+
+    if (!userId) {
+      res.status(401).json({ error: 'Not authenticated' });
+      return;
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+      }
+    });
+
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    res.json({ user });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
