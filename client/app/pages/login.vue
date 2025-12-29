@@ -11,7 +11,7 @@ const toast = useToast();
 
 const schema = z.object({
   email: z.email('Wprowadź poprawny adres e-mail'),
-  password: z.string().min(6, 'Hasło musi mieć min. 6 znaków'),
+  password: z.string('Hasło jest wymagane').min(6, 'Hasło musi mieć min. 6 znaków'),
 });
 type Schema = z.output<typeof schema>
 
@@ -53,11 +53,11 @@ const handleLogin = async (event: FormSubmitEvent<Schema>) => {
 
       <UForm :schema="schema" validate-on="change" :state="state" class="space-y-4" @submit="handleLogin">
         <UFormField label="Email" name="email">
-          <UInput v-model="state.email" icon="i-heroicons-envelope" class="w-full"/>
+          <UInput v-model="state.email" icon="i-heroicons-envelope" class="w-full" autocomplete="email"/>
         </UFormField>
 
         <UFormField label="Hasło" name="password">
-          <UInput v-model="state.password" type="password" icon="i-heroicons-lock-closed" class="w-full"/>
+          <UInput v-model="state.password" type="password" icon="i-heroicons-lock-closed" class="w-full" autocomplete="current-password"/>
         </UFormField>
 
         <UButton type="submit" :loading="auth.loading" block>

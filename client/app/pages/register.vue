@@ -10,10 +10,10 @@ const auth = useAuthStore();
 const toast = useToast();
 
 const schema = z.object({
-  name: z.string().min(3, 'Nazwa użytkownika musi zawierać min. 3 znaki'),
+  name: z.string('Nazwa użytkownika jest wymagana').min(3, 'Nazwa użytkownika musi zawierać min. 3 znaki'),
   email: z.email('Wprowadź poprawny adres e-mail'),
-  password: z.string().min(6, 'Hasło musi mieć min. 6 znaków'),
-  confirmPassword: z.string(),
+  password: z.string('Hasło jest wymagane').min(6, 'Hasło musi mieć min. 6 znaków'),
+  confirmPassword: z.string('Potwierdzenie jest wymagane'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: 'Hasła muszą być takie same',
   path: ['confirmPassword'],
@@ -62,11 +62,11 @@ const handleRegister = async (event: FormSubmitEvent<Schema>) => {
 
       <UForm :schema="schema" validate-on="change" :state="state" class="space-y-4" @submit="handleRegister">
         <UFormField label="Nazwa użytkownika" name="name">
-          <UInput v-model="state.name" icon="i-heroicons-user" class="w-full" autocomplete="off"/>
+          <UInput v-model="state.name" icon="i-heroicons-user" class="w-full" autocomplete="name"/>
         </UFormField>
 
         <UFormField label="Email" name="email">
-          <UInput v-model="state.email" icon="i-heroicons-envelope" class="w-full" autocomplete="off"/>
+          <UInput v-model="state.email" icon="i-heroicons-envelope" class="w-full" autocomplete="email"/>
         </UFormField>
 
         <UFormField label="Hasło" name="password">
