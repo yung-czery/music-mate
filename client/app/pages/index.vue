@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Playlist } from '~/types'
-
 definePageMeta({
   middleware: 'auth'
 })

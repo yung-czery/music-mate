@@ -17,10 +17,6 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  pinia: {
-    storesDirs: ['./app/stores/**'],
-  },
-
   routeRules: {
     '/api/_nuxt_icon/**': { proxy: false },
     '/_nuxt_icon/**': { proxy: false },

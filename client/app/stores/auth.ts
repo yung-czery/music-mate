@@ -1,6 +1,3 @@
-import { defineStore } from 'pinia'
-import type { User } from '~/types'
-
 type LoginCredentials = {
   email: string
   password: string
