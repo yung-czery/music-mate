@@ -4,6 +4,8 @@ import * as spotifyService from '../services/spotify.service';
 import * as userService from '../services/user.service';
 import * as playlistService from '../services/playlist.service';
 
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3001';
+
 export const search = async (req: Request, res: Response): Promise<void> => {
   try {
     const query = req.query.q as string;
@@ -25,8 +27,7 @@ export const loginToSpotify = (req: Request, res: Response) => {
 
   const url = spotifyService.getAuthorizationUrl(userId);
 
-  // Albo res.redirect(url) albo zwracanie url i front przekieruje
-  res.json({ url });
+  res.redirect(url);
 };
 
 export const spotifyCallback = async (req: Request, res: Response): Promise<void> => {
@@ -50,8 +51,7 @@ export const spotifyCallback = async (req: Request, res: Response): Promise<void
     // @ts-ignore
     const importedPlaylists = await userService.importSpotifyPlaylists(userId, tokenData.access_token);
 
-    res.send(importedPlaylists);
-
+    res.redirect(`${FRONTEND_URL}?import=success`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Something went wrong during import');

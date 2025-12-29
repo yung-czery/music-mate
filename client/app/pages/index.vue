@@ -1,16 +1,32 @@
 <script setup lang="ts">
 definePageMeta({
-  middleware: 'auth'
-})
+  middleware: 'auth',
+});
 
-const { data: playlists, pending } = await useFetch<Playlist[]>('/api/playlists')
+const route = useRoute();
+const router = useRouter();
+const toast = useToast();
+
+const { data: playlists, pending } = await useFetch<Playlist[]>('/api/playlists');
+
+onMounted(() => {
+  if (route.query.import === 'success') {
+    toast.add({
+      title: 'Sukces!',
+      description: 'Połączono ze Spotify i zaimportowano playlisty.',
+      color: 'success',
+      icon: 'i-heroicons-check-circle',
+    });
+
+    router.replace({ query: { ...route.query, import: undefined } });
+  }
+});
 </script>
 
 <template>
   <div>
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-2xl font-bold">Twoje Playlisty</h2>
-      <UButton icon="i-heroicons-plus" color="primary">Importuj ze Spotify</UButton>
     </div>
 
     <div v-if="pending" class="text-gray-400">Ładowanie playlist...</div>
@@ -23,7 +39,7 @@ const { data: playlists, pending } = await useFetch<Playlist[]>('/api/playlists'
       >
         <div class="space-y-3">
           <div class="aspect-square bg-gray-800 rounded-md overflow-hidden flex items-center justify-center">
-            <UIcon name="i-heroicons-musical-note" class="w-16 h-16 text-gray-600" />
+            <UIcon name="i-heroicons-musical-note" class="w-16 h-16 text-gray-600"/>
           </div>
 
           <div>
