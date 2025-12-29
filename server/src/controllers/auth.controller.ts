@@ -69,7 +69,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.cookie('jwt', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 
@@ -115,7 +115,7 @@ export const logout = (req: Request, res: Response): void => {
   res.clearCookie('jwt', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
   });
 
   res.status(200).json({ message: 'Logged out successfully' });

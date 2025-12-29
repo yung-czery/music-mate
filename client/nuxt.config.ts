@@ -18,11 +18,15 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
 
   routeRules: {
-    '/api/_nuxt_icon/**': { proxy: false },
-    '/_nuxt_icon/**': { proxy: false },
+    '/api/auth/**': { proxy: 'http://localhost:3000/api/auth/**' },
+    '/api/playlists/**': { proxy: 'http://localhost:3000/api/playlists/**' },
+    '/api/spotify/**': { proxy: 'http://localhost:3000/api/spotify/**' },
+  },
 
-    '/api/**': {
-      proxy: 'http://localhost:3000/api/**'
+  runtimeConfig: {
+    public: {
+      apiUrl: 'http://localhost:3000',
+      appName: 'MusicMate',
     }
   },
 
@@ -41,5 +45,5 @@ export default defineNuxtConfig({
       'mosaic.scdn.co',  // Dla playlist generowanych automatycznie
       'lineup-images.scdn.co'
     ]
-  },
+  }
 })
