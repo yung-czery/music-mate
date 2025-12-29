@@ -1,10 +1,10 @@
 <script setup lang="ts">
-const auth = useAuthStore()
+const auth = useAuthStore();
 
 await useAsyncData(async () => {
-  await auth.fetchUser()
-  return true
-})
+  await auth.fetchUser();
+  return true;
+});
 </script>
 
 <template>

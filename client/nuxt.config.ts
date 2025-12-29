@@ -23,6 +23,13 @@ export default defineNuxtConfig({
     '/api/spotify/**': { proxy: 'http://localhost:3000/api/spotify/**' },
   },
 
+  runtimeConfig: {
+    public: {
+      apiUrl: 'http://localhost:3000',
+      appName: 'MusicMate',
+    }
+  },
+
   icon: {
     serverBundle: 'local',
 
