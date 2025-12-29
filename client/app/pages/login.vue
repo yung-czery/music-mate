@@ -23,14 +23,6 @@ const state = reactive<Partial<Schema>>({
 const handleLogin = async (event: FormSubmitEvent<Schema>) => {
   try {
     await auth.login(event.data);
-
-    toast.add({
-      title: 'Sukces!',
-      description: 'Zalogowano pomyślnie',
-      color: 'success',
-      icon: 'i-heroicons-check-circle',
-    });
-
     navigateTo('/');
   } catch (e) {
     console.error(e);

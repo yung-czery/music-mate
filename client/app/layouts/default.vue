@@ -36,7 +36,8 @@ const userItems = computed<NavigationMenuItem[]>(() => [
   [{
     label: 'Wyloguj się',
     icon: 'i-heroicons-arrow-right-start-on-rectangle',
-    click: () => auth.logout(),
+    onSelect: () => auth.logout(),
+    class: 'cursor-pointer',
   }],
 ]);
 </script>
