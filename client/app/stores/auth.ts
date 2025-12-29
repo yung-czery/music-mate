@@ -17,9 +17,13 @@ export const useAuthStore = defineStore('auth', {
     async fetchUser() {
       this.loading = true
       try {
-        const { data } = await useFetch<{ user: User }>('/api/auth/me')
-        if (data.value?.user) {
-          this.user = data.value.user
+        const headers = useRequestHeaders(['cookie'])
+
+        const data = await $fetch<{ user: User }>('/api/auth/me', {
+          headers: headers,
+        })
+        if (data.user) {
+          this.user = data.user
         } else {
           this.user = null
         }
