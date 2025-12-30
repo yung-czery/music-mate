@@ -3,6 +3,7 @@ import { searchTracks } from '../services/spotify.service';
 import * as spotifyService from '../services/spotify.service';
 import * as userService from '../services/user.service';
 import * as playlistService from '../services/playlist.service';
+import prisma from '../utils/prisma';
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3001';
 
@@ -62,10 +63,19 @@ export const spotifyCallback = async (req: Request, res: Response): Promise<void
   const userId = state as string;
 
   try {
-    const tokenData = await spotifyService.exchangeCodeForToken(code as string);
+    const tokenData: any = await spotifyService.exchangeCodeForToken(code as string);
 
-    // @ts-ignore
-    const importedPlaylists = await userService.importSpotifyPlaylists(userId, tokenData.access_token);
+    const expiresAt = new Date(Date.now() + tokenData.expires_in * 1000);
+    await prisma.user.update({
+      where: { id: userId },
+      data: {
+        spotifyAccessToken: tokenData.access_token,
+        spotifyRefreshToken: tokenData.refresh_token,
+        spotifyTokenExpiresAt: expiresAt
+      }
+    });
+
+    await userService.importSpotifyPlaylists(userId, tokenData.access_token);
 
     res.redirect(`${FRONTEND_URL}?import=success`);
   } catch (err) {
@@ -76,17 +86,27 @@ export const spotifyCallback = async (req: Request, res: Response): Promise<void
 
 export const syncTracks = async (req: Request, res: Response): Promise<void> => {
   try {
-    // Frontend musi wysłać te 3 rzeczy
-    const { internalPlaylistId, spotifyPlaylistId, accessToken } = req.body;
+    const { internalPlaylistId, spotifyPlaylistId } = req.body;
 
     const userId = req.user?.userId as string;
 
-    if (!internalPlaylistId || !spotifyPlaylistId || !accessToken) {
-      res.status(400).json({ error: 'Missing: internalPlaylistId, spotifyPlaylistId or accessToken' });
+    if (!internalPlaylistId || !spotifyPlaylistId) {
+      res.status(400).json({ error: 'Missing playlist IDs' });
       return;
     }
 
-    const rawTracks = await spotifyService.fetchPlaylistTracks(accessToken, spotifyPlaylistId);
+    const user = await prisma.user.findUnique({
+      where: { id: userId }
+    });
+
+    if (!user || !user.spotifyAccessToken) {
+      res.status(401).json({ error: 'User not connected to Spotify' });
+      return;
+    }
+
+    // TODO: Dodać sprawdzenie czy token nie wygasł
+
+    const rawTracks = await spotifyService.fetchPlaylistTracks(user.spotifyAccessToken, spotifyPlaylistId);
 
     const result = await playlistService.syncSpotifyTracksToPlaylist(
       userId,
@@ -101,6 +121,10 @@ export const syncTracks = async (req: Request, res: Response): Promise<void> => 
 
   } catch (error: any) {
     console.error('Sync Error:', error);
+    if (error.response?.status === 401) {
+      res.status(401).json({ error: 'Spotify token expired. Please reconnect.' });
+      return;
+    }
     res.status(500).json({ error: error.message || 'Failed to sync tracks' });
   }
 };

@@ -14,11 +14,14 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid())
-  email     String  @unique
-  password  String
-  name      String?
-  spotifyId String? @unique
+  id                    String    @id @default(uuid())
+  email                 String    @unique
+  password              String
+  name                  String?
+  spotifyId             String?   @unique
+  spotifyAccessToken    String?   @db.Text
+  spotifyRefreshToken   String?   @db.Text
+  spotifyTokenExpiresAt DateTime?
 
   // Relacje
   playlists Playlist[]
