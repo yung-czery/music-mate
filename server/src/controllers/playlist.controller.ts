@@ -76,7 +76,13 @@ export const getPublicPlaylists = async (req: Request, res: Response): Promise<v
             },
           },
         },
-        user: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -197,7 +203,7 @@ export const getPlaylistDetails = async (req: Request, res: Response): Promise<v
     const { id } = req.params;
     const userId = req.user?.userId;
 
-    const playlist = await prisma.playlist.findUnique({
+    const rawPlaylist = await prisma.playlist.findUnique({
       where: { id },
       include: {
         tracks: {
@@ -206,19 +212,33 @@ export const getPlaylistDetails = async (req: Request, res: Response): Promise<v
             track: true,
           },
         },
-        user: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
-    if (!playlist) {
+    if (!rawPlaylist) {
       res.status(404).json({ error: 'Playlist not found' });
       return;
     }
 
-    if (!playlist.isPublic && playlist.userId !== userId) {
+    if (!rawPlaylist.isPublic && rawPlaylist.userId !== userId) {
       res.status(403).json({ error: 'Access denied to this private playlist' });
       return;
     }
+
+    const playlist = {
+      ...rawPlaylist,
+      tracks: rawPlaylist.tracks.map((pt) => ({
+        ...pt.track,
+        addedAt: pt.addedAt,
+      }))
+    };
 
     res.json(playlist);
   } catch (error) {

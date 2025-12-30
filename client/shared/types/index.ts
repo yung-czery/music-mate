@@ -10,9 +10,10 @@ export type Playlist = {
   description?: string;
   isPublic: boolean;
   userId: string;
+  spotifyId?: string;
   createdAt: Date;
   updatedAt: Date;
-  tracks: {
+  tracks: Track[] | {
     coverUrl?: string | null;
   }[];
   user?: User;
@@ -25,7 +26,7 @@ export type Track = {
   artist: string;
   album: string;
   coverUrl?: string;
-  durationMs?: number;
+  durationMs: number;
   playlistId: string;
   createdAt: Date;
 }
