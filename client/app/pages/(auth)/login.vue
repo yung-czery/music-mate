@@ -40,7 +40,7 @@ const handleLogin = async (event: FormSubmitEvent<Schema>) => {
   <div class="flex flex-col gap-4 items-center justify-center min-h-screen bg-gray-950">
     <UCard class="w-full max-w-sm">
       <template #header>
-        <h2 class="text-xl font-bold text-center text-primary-500">Zaloguj się</h2>
+        <h2 class="text-xl font-bold text-center text-primary-500">Zaloguj się do MusicMate</h2>
       </template>
 
       <UForm :schema="schema" validate-on="change" :state="state" class="space-y-4" @submit="handleLogin">

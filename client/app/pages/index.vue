@@ -3,55 +3,53 @@ definePageMeta({
   middleware: 'auth',
 });
 
-const route = useRoute();
-const router = useRouter();
-const toast = useToast();
+const links = ref([
+  {
+    label: 'Odkrywaj playlisty',
+    to: '/explore',
+    icon: 'i-lucide-compass',
+  },
+  {
+    label: 'Twoja biblioteka',
+    to: '/playlists',
+    color: 'neutral',
+    variant: 'subtle',
+    trailingIcon: 'i-lucide-arrow-right',
+  },
+]);
 
-const { data: playlists, pending } = await useFetch<Playlist[]>('/api/playlists');
-
-onMounted(() => {
-  if (route.query.import === 'success') {
-    toast.add({
-      title: 'Sukces!',
-      description: 'Połączono ze Spotify i zaimportowano playlisty.',
-      color: 'success',
-      icon: 'i-heroicons-check-circle',
-    });
-
-    router.replace({ query: { ...route.query, import: undefined } });
-  }
-});
+const cards = ref([
+  {
+    title: 'Społeczność MusicMate',
+    description: 'Brakuje Ci inspiracji? Przeglądaj playlisty stworzone przez innych użytkowników. Zobacz, czego słucha świat i znajdź nowe brzmienia.',
+    icon: 'i-lucide-users',
+  },
+  {
+    title: 'Import ze Spotify',
+    description: 'Przenieś swoje ulubione kawałki w mgnieniu oka. Połącz konto i zarządzaj swoją dotychczasową kolekcją w nowym, lepszym miejscu.',
+    icon: 'i-simple-icons-spotify',
+  },
+  {
+    title: 'Twórz i Organizuj',
+    description: 'Buduj własne playlisty z utworów dostępnych w systemie. Masz pełną kontrolę nad kolejnością i zawartością swojej biblioteki.',
+    icon: 'i-lucide-library',
+  },
+]);
 </script>
 
 <template>
-  <div>
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold">Twoje Playlisty</h2>
-    </div>
-
-    <div v-if="pending" class="text-gray-400">Ładowanie playlist...</div>
-
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      <UCard
-          v-for="playlist in playlists"
-          :key="playlist.id"
-          class="hover:ring-2 hover:ring-primary-500 transition cursor-pointer"
-      >
-        <div class="space-y-3">
-          <div class="aspect-square bg-gray-800 rounded-md overflow-hidden flex items-center justify-center">
-            <UIcon name="i-heroicons-musical-note" class="w-16 h-16 text-gray-600"/>
-          </div>
-
-          <div>
-            <h3 class="font-bold truncate">{{ playlist.name }}</h3>
-            <p class="text-sm text-gray-400 truncate">{{ playlist.description || 'Brak opisu' }}</p>
-          </div>
-        </div>
-      </UCard>
-    </div>
-
-    <div v-if="!pending && playlists?.length === 0" class="text-center py-10 text-gray-500">
-      Nie masz jeszcze żadnych playlist. Zaimportuj coś!
-    </div>
-  </div>
+  <UContainer>
+    <UPageHero
+        title="Aplikacja MusicMate"
+        description="Zarządzaj swoją muzyką w jednym miejscu. Importuj playlisty ze Spotify i twórz nowe wyszukując utworów z różnych zakątków świata."
+        :links="links"
+    />
+    <UPageGrid>
+      <UPageCard
+          v-for="(card, index) in cards"
+          :key="index"
+          v-bind="card"
+      />
+    </UPageGrid>
+  </UContainer>
 </template>
