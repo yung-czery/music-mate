@@ -45,7 +45,7 @@ const getAccessToken = async (): Promise<string> => {
   }
 };
 
-export const searchTracks = async (query: string) => {
+export const searchTracks = async (query: string, limit = 20, offset = 0) => {
   const token = await getAccessToken();
 
   try {
@@ -54,7 +54,8 @@ export const searchTracks = async (query: string) => {
       params: {
         q: query,
         type: 'track,album',
-        limit: 10,
+        limit: limit,
+        offset: offset,
       },
     });
 

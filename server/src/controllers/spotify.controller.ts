@@ -9,14 +9,30 @@ const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3001';
 export const search = async (req: Request, res: Response): Promise<void> => {
   try {
     const query = req.query.q as string;
+    const limit = parseInt(req.query.limit as string) || 20;
+    const offset = parseInt(req.query.offset as string) || 0;
 
     if (!query) {
       res.status(400).json({ error: 'Query parameter "q" is required' });
       return;
     }
 
-    const results = await searchTracks(query);
-    res.json(results);
+    const rawData: any = await spotifyService.searchTracks(query, limit, offset);
+
+    const tracks = rawData.tracks.items.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      artist: item.artists.map((a: any) => a.name).join(', '),
+      album: item.album.name,
+      image: item.album.images[0]?.url || '',
+      uri: item.uri,
+      duration_ms: item.duration_ms,
+    }));
+
+    res.json({
+      tracks,
+      total: rawData.tracks.total,
+    });
   } catch (error) {
     res.status(500).json({ error: 'Spotify API error' });
   }
@@ -75,12 +91,12 @@ export const syncTracks = async (req: Request, res: Response): Promise<void> => 
     const result = await playlistService.syncSpotifyTracksToPlaylist(
       userId,
       internalPlaylistId,
-      rawTracks
+      rawTracks,
     );
 
     res.json({
       message: 'Tracks imported successfully',
-      totalTracksProcessed: result.count
+      totalTracksProcessed: result.count,
     });
 
   } catch (error: any) {

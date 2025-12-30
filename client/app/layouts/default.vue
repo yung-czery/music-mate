@@ -57,13 +57,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
         </NuxtLink>
       </template>
 
-      <UInput
-          icon="i-heroicons-magnifying-glass"
-          placeholder="Szukaj..."
-          variant="outline"
-          :ui="{ icon: { trailing: { pointer: '' } } }"
-          class="w-full"
-      />
+      <SpotifySearchBar />
 
       <template #right>
         <UColorModeButton/>
