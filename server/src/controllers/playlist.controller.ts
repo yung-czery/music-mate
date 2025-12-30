@@ -45,6 +45,9 @@ export const getUserPlaylists = async (req: Request, res: Response): Promise<voi
             },
           },
         },
+        _count: {
+          select: { tracks: true },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -75,6 +78,9 @@ export const getPublicPlaylists = async (req: Request, res: Response): Promise<v
               select: { coverUrl: true },
             },
           },
+        },
+        _count: {
+          select: { tracks: true },
         },
         user: {
           select: {
@@ -237,7 +243,7 @@ export const getPlaylistDetails = async (req: Request, res: Response): Promise<v
       tracks: rawPlaylist.tracks.map((pt) => ({
         ...pt.track,
         addedAt: pt.addedAt,
-      }))
+      })),
     };
 
     res.json(playlist);

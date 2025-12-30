@@ -16,6 +16,9 @@ export type Playlist = {
   tracks: Track[] | {
     coverUrl?: string | null;
   }[];
+  _count?: {
+    tracks: number;
+  };
   user?: User;
 }
 

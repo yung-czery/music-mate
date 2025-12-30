@@ -1,18 +1,61 @@
 <script setup lang="ts">
-const { data } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`);
+const { data, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`);
 
-const links = ref([
-  {
+const toast = useToast();
+const loading = ref(false);
+
+const links = computed(() => {
+  if (!data.value?.spotifyId) return [];
+
+  return [{
     label: 'Podejrzyj na Spotify',
     icon: 'i-simple-icons-spotify',
-    to: `https://open.spotify.com/playlist/${data.value?.spotifyId}`,
+    to: `https://open.spotify.com/playlist/${data.value.spotifyId}`,
     target: '_blank',
-  },
-]);
+  }];
+});
 
 const handleImport = async () => {
+  loading.value = true;
 
-}
+  try {
+    await $fetch('/api/spotify/sync', {
+      method: 'POST',
+      body: {
+        internalPlaylistId: data.value?.id,
+        spotifyPlaylistId: data.value?.spotifyId,
+      },
+    });
+
+    await refresh();
+
+    toast.add({
+      title: 'Sukces!',
+      description: 'Utwory zostały zaimportowane pomyślnie',
+      color: 'success',
+      icon: 'i-heroicons-check-circle',
+    });
+  } catch (e) {
+    console.error(e);
+    if (e.response?.status === 401) {
+      toast.add({
+        title: 'Błąd!',
+        description: 'Twoje konto Spotify nie jest połączone lub utraciło ważność.',
+        color: 'error',
+        icon: 'i-heroicons-x-circle',
+      });
+    } else {
+      toast.add({
+        title: 'Błąd!',
+        description: 'Wystąpił błąd podczas importowania utworów',
+        color: 'error',
+        icon: 'i-heroicons-x-circle',
+      });
+    }
+  } finally {
+    loading.value = false;
+  }
+};
 </script>
 
 <template>
@@ -21,7 +64,7 @@ const handleImport = async () => {
         :title="data.name"
         :description="data.description"
         :headline="`Autor: ${data.user?.name}` || ''"
-        :links="data.spotifyId ? links : []"
+        :links="links"
     />
 
     <UPageList>
@@ -37,11 +80,12 @@ const handleImport = async () => {
       Ta playlista jest pusta.
     </div>
 
-    <UContainer v-if="!data?.tracks.length && data.spotifyId"
-                class="flex flex-col gap-4 items-center text-center py-10 text-gray-500">
+    <UContainer
+        v-if="!data?.tracks.length && data.spotifyId"
+        class="flex flex-col gap-4 items-center text-center py-10 text-gray-500">
       Zaimportowałeś playlisty ze Spotify, ale nie zaimportowałeś utworów?
 
-      <UButton icon="i-lucide-import" @click="handleImport">Zaimportuj utwory</UButton>
+      <UButton icon="i-lucide-import" :loading="loading" @click="handleImport">Zaimportuj utwory</UButton>
     </UContainer>
   </UPage>
 </template>
