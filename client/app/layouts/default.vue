@@ -11,6 +11,11 @@ const items = computed<NavigationMenuItem[]>(() => [
     icon: 'i-heroicons-home',
   },
   {
+    label: 'Eksploruj',
+    to: '/explore',
+    icon: 'i-lucide-compass',
+  },
+  {
     label: 'Biblioteka',
     to: '/playlists',
     icon: 'i-heroicons-musical-note',

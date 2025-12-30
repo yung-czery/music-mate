@@ -12,4 +12,8 @@ export type Playlist = {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  tracks: {
+    coverUrl?: string | null;
+  }[];
+  user?: User;
 }
