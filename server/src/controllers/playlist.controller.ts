@@ -33,9 +33,60 @@ export const getUserPlaylists = async (req: Request, res: Response): Promise<voi
   try {
     const userId = req.user?.userId;
 
-    const playlists = await prisma.playlist.findMany({
+    const rawPlaylists = await prisma.playlist.findMany({
       where: { userId },
+      include: {
+        tracks: {
+          take: 4, // dla okładek na Card
+          orderBy: { addedAt: 'desc' },
+          include: {
+            track: {
+              select: { coverUrl: true },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
     });
+
+    const playlists = rawPlaylists.map((playlist) => ({
+      ...playlist,
+      tracks: playlist.tracks.map((pt) => ({
+        coverUrl: pt.track.coverUrl,
+      })),
+    }));
+
+    res.json(playlists);
+  } catch (error) {
+    res.status(500).json({ error: 'Could not fetch playlists' });
+  }
+};
+
+export const getPublicPlaylists = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const rawPlaylists = await prisma.playlist.findMany({
+      where: { isPublic: true },
+      include: {
+        tracks: {
+          take: 4, // dla okładek na Card
+          orderBy: { addedAt: 'desc' },
+          include: {
+            track: {
+              select: { coverUrl: true },
+            },
+          },
+        },
+        user: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    const playlists = rawPlaylists.map((playlist) => ({
+      ...playlist,
+      tracks: playlist.tracks.map((pt) => ({
+        coverUrl: pt.track.coverUrl,
+      })),
+    }));
 
     res.json(playlists);
   } catch (error) {
@@ -89,8 +140,8 @@ export const deletePlaylist = async (req: Request, res: Response): Promise<void>
     const result = await prisma.playlist.deleteMany({
       where: {
         id: id,
-        userId: userId
-      }
+        userId: userId,
+      },
     });
 
     if (result.count === 0) {
@@ -152,10 +203,11 @@ export const getPlaylistDetails = async (req: Request, res: Response): Promise<v
         tracks: {
           orderBy: { addedAt: 'desc' },
           include: {
-            track: true
-          }
-        }
-      }
+            track: true,
+          },
+        },
+        user: true,
+      },
     });
 
     if (!playlist) {

@@ -4,6 +4,7 @@ import {
   createPlaylist,
   deletePlaylist,
   getPlaylistDetails,
+  getPublicPlaylists,
   getUserPlaylists,
   removeTrack,
   updatePlaylist,
@@ -16,6 +17,7 @@ router.use(authenticateToken);
 
 router.post('/', createPlaylist);
 router.get('/', getUserPlaylists);
+router.get('/public', getPublicPlaylists);
 router.delete('/:id', deletePlaylist);
 router.patch('/:id', updatePlaylist);
 router.get('/:id', getPlaylistDetails);
