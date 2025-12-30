@@ -17,3 +17,25 @@ export type Playlist = {
   }[];
   user?: User;
 }
+
+export type Track = {
+  id: string;
+  spotifyId: string;
+  title: string;
+  artist: string;
+  album: string;
+  coverUrl?: string;
+  durationMs?: number;
+  playlistId: string;
+  createdAt: Date;
+}
+
+export type SpotifyTrack = {
+  id: string;
+  name: string;
+  artist: string;
+  album: string;
+  image: string;
+  uri: string;
+  duration_ms: number;
+}
