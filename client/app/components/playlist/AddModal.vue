@@ -21,8 +21,9 @@ const state = reactive<Partial<Schema>>({
 });
 
 const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
+  loading.value = true;
+
   try {
-    loading.value = true;
     await $fetch('/api/playlists', {
       method: 'POST',
       body: event.data,

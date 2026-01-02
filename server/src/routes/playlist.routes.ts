@@ -23,7 +23,7 @@ router.patch('/:id', updatePlaylist); //
 router.get('/:id', getPlaylistDetails); //
 
 router.post('/:id/tracks', addTrack);
-router.delete('/:id/tracks/:trackId', removeTrack);
+router.delete('/:id/tracks/:trackId', removeTrack); //
 
 
 export default router;

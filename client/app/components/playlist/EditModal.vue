@@ -35,8 +35,9 @@ watch(() => props.playlist, (newVal) => {
 }, { immediate: true });
 
 const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
+  loadingEdit.value = true;
+
   try {
-    loadingEdit.value = true;
     await $fetch(`/api/playlists/${props.playlist.id}`, {
       method: 'PATCH',
       body: event.data,
@@ -57,9 +58,9 @@ const handleDelete = async () => {
   if (!confirm('Czy na pewno chcesz bezpowrotnie usunąć tę playlistę?')) {
     return;
   }
+  loadingDelete.value = true;
 
   try {
-    loadingDelete.value = true;
     await $fetch(`/api/playlists/${props.playlist.id}`, {
       method: 'DELETE',
     });

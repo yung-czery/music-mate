@@ -3,7 +3,8 @@ const { data, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params
 
 const toast = useToast();
 const auth = useAuthStore();
-const loading = ref(false);
+const loadingImport = ref(false);
+const loadingRemoveTrack = ref(false);
 const editModalOpen = ref(false);
 
 const links = computed(() => {
@@ -15,7 +16,7 @@ const links = computed(() => {
       icon: 'i-lucide-edit-2',
       onClick: () => {
         editModalOpen.value = true;
-      }
+      },
     });
   }
 
@@ -32,7 +33,7 @@ const links = computed(() => {
 });
 
 const handleImport = async () => {
-  loading.value = true;
+  loadingImport.value = true;
 
   try {
     await $fetch('/api/spotify/sync', {
@@ -69,7 +70,22 @@ const handleImport = async () => {
       });
     }
   } finally {
-    loading.value = false;
+    loadingImport.value = false;
+  }
+};
+
+const handleRemoveTrack = async (trackId: string) => {
+  loadingRemoveTrack.value = true;
+
+  try {
+    await $fetch(`/api/playlists/${data.value?.id}/tracks/${trackId}`, {
+      method: 'DELETE',
+    });
+    await refresh();
+    toast.add({ title: 'Pomyślnie usunięto utwór', color: 'success' });
+  } catch (e) {
+    console.error(e);
+    toast.add({ title: 'Błąd podczas usuwania utworu', color: 'error' });
   }
 };
 </script>
@@ -89,6 +105,7 @@ const handleImport = async () => {
           :key="item.id"
           :index="index"
           :track="item"
+          @remove="handleRemoveTrack"
       />
     </UPageList>
 
@@ -101,7 +118,9 @@ const handleImport = async () => {
         class="flex flex-col gap-4 items-center text-center py-10 text-gray-500">
       Zaimportowałeś playlisty ze Spotify, ale nie zaimportowałeś utworów?
 
-      <UButton icon="i-lucide-import" :loading="loading" @click="handleImport">Zaimportuj utwory</UButton>
+      <UButton icon="i-lucide-import" :loading="loadingImport" :disabled="loadingImport" @click="handleImport">
+        Zaimportuj utwory
+      </UButton>
     </UContainer>
 
     <LazyPlaylistEditModal
