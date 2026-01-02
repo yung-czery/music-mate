@@ -1,5 +1,10 @@
 <script setup lang="ts">
-const { data, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`);
+const route = useRoute();
+const playlistId = route.params.id as string;
+
+const { data, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`, {
+  key: `playlist-${playlistId}`,
+});
 
 const toast = useToast();
 const auth = useAuthStore();

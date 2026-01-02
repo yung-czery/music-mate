@@ -30,11 +30,11 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
     });
 
     emit('success');
-    toast.add({ title: 'Pomyślnie dodano playlistę', color: 'success' });
+    toast.add({ title: 'Pomyślnie dodano playlistę', color: 'success', icon: 'i-heroicons-check-circle' });
     open.value = false;
   } catch (e) {
     console.error(e);
-    toast.add({ title: 'Błąd podczas tworzenia playlisty', color: 'error' });
+    toast.add({ title: 'Błąd podczas tworzenia playlisty', color: 'error', icon: 'i-heroicons-x-circle' });
   } finally {
     loading.value = false;
   }

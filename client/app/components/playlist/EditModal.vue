@@ -44,11 +44,11 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
     });
 
     emit('success');
-    toast.add({ title: 'Pomyślnie edytowano playlistę', color: 'success' });
+    toast.add({ title: 'Pomyślnie edytowano playlistę', color: 'success', icon: 'i-heroicons-check-circle' });
     open.value = false;
   } catch (e) {
     console.error(e);
-    toast.add({ title: 'Błąd podczas edytowania playlisty', color: 'error' });
+    toast.add({ title: 'Błąd podczas edytowania playlisty', color: 'error', icon: 'i-heroicons-x-circle' });
   } finally {
     loadingEdit.value = false;
   }
@@ -64,12 +64,12 @@ const handleDelete = async () => {
     await $fetch(`/api/playlists/${props.playlist.id}`, {
       method: 'DELETE',
     });
-    toast.add({ title: 'Pomyślnie usunięto playlistę', color: 'success' });
+    toast.add({ title: 'Pomyślnie usunięto playlistę', color: 'success', icon: 'i-heroicons-check-circle' });
     open.value = false;
     router.push('/playlists');
   } catch (e) {
     console.error(e);
-    toast.add({ title: 'Błąd podczas usuwania playlisty', color: 'error' });
+    toast.add({ title: 'Błąd podczas usuwania playlisty', color: 'error', icon: 'i-heroicons-x-circle' });
   } finally {
     loadingDelete.value = false;
   }

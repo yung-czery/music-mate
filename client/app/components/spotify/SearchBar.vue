@@ -17,6 +17,8 @@ const q = ref(route.query.q?.toString() || '');
 const open = ref(false);
 const page = ref(1);
 const limit = 5;
+const isModalOpen = ref(false);
+const trackToAdd = ref<SpotifyTrack | null>(null);
 
 const offset = computed(() => (page.value - 1) * limit);
 
@@ -57,8 +59,8 @@ watch(page, () => {
 });
 
 onClickOutside(containerRef, () => {
-  if (open.value) {
-    handleClear();
+  if (open.value && !isModalOpen.value) {
+    open.value = false;
   }
 }, {
   ignore: [popoverContentRef],
@@ -75,15 +77,23 @@ const handleInput = () => {
 };
 
 const handleClear = () => {
+  if (isModalOpen.value) return;
+
   open.value = false;
   q.value = '';
-  router.push({ query: { q: q.value } });
+  router.push({ query: { q: undefined } });
 };
 
 const totalPages = computed(() => {
   if (!data.value?.total) return 0;
   return Math.ceil(data.value.total / limit);
 });
+
+const addToPlaylist = (track: SpotifyTrack) => {
+  trackToAdd.value = track;
+  isModalOpen.value = true;
+  open.value = false;
+}
 </script>
 
 <template>
@@ -168,7 +178,7 @@ const totalPages = computed(() => {
 
               <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <UTooltip text="Dodaj do playlisty">
-                  <UButton icon="i-heroicons-plus" variant="ghost" size="sm"/>
+                  <UButton icon="i-heroicons-plus" variant="ghost" size="sm" @click="addToPlaylist(track)"/>
                 </UTooltip>
               </div>
 
@@ -201,5 +211,11 @@ const totalPages = computed(() => {
         </UContainer>
       </template>
     </UPopover>
+    <LazyTrackAddModal
+        v-if="trackToAdd"
+        v-model:open="isModalOpen"
+        :track="trackToAdd"
+        @close="trackToAdd = null"
+    />
   </UContainer>
 </template>
