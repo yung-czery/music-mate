@@ -48,7 +48,7 @@ const items = [
           :src="track.coverUrl || '/placeholder.png'"
           alt="Cover"
           class="w-10 h-10 rounded object-cover bg-gray-200 shrink-0 shadow-sm"
-      />
+      >
 
       <div class="min-w-0">
         <p class="font-medium text-gray-900 dark:text-gray-100 truncate text-sm">

@@ -92,7 +92,7 @@ const handleAdd = async (playlistId: string) => {
         </div>
 
         <div v-else class="text-center py-4 text-sm text-gray-500">
-          Nie masz jeszcze żadnych playlist. <br/>
+          Nie masz jeszcze żadnych playlist. <br>
           <NuxtLink to="/playlists" class="text-primary-500 hover:underline" @click="open = false">Utwórz nową
           </NuxtLink>
         </div>

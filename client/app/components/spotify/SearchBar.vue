@@ -156,7 +156,7 @@ const addToPlaylist = (track: SpotifyTrack) => {
             >
 
               <div class="relative w-12 h-12 mr-4 shrink-0">
-                <img :src="track.image" alt="Album" class="w-full h-full object-cover rounded shadow-sm"/>
+                <img :src="track.image" alt="Album" class="w-full h-full object-cover rounded shadow-sm">
                 <div
                     class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center rounded backdrop-blur-[1px]">
                   <UIcon name="i-heroicons-play" class="text-white w-6 h-6"/>
