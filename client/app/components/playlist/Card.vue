@@ -3,7 +3,6 @@ const props = defineProps<{
   playlist: Playlist
 }>();
 
-
 const coverImages = computed(() => {
   if (!props.playlist.tracks) return [];
 
@@ -55,7 +54,7 @@ const gradientClass = computed(() => {
           <div class="flex items-center gap-1.5 mt-1 text-xs text-gray-500 font-medium">
             <UIcon :name="playlist.isPublic ? 'i-lucide-globe' : 'i-lucide-lock'" class="size-3.5" />
             <span>{{ playlist.isPublic ? 'Publiczna' : 'Prywatna' }}</span>
-            <span>• Utworów: {{ playlist.tracks?.length || 0 }}</span>
+            <span>• Utworów: {{ playlist._count?.tracks || 0 }}</span>
           </div>
         </div>
         <div @click.stop>
