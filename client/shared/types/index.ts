@@ -1,7 +1,8 @@
 export type User = {
   id: string;
   email: string;
-  name?: string;
+  name: string;
+  createdAt: Date;
 }
 
 export type Playlist = {
