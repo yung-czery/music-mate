@@ -97,6 +97,7 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
         id: true,
         email: true,
         name: true,
+        isSpotifyConnected: true,
         createdAt: true,
       },
     });
