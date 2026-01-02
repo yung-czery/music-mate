@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { searchTracks } from '../services/spotify.service';
 import * as spotifyService from '../services/spotify.service';
 import * as userService from '../services/user.service';
 import * as playlistService from '../services/playlist.service';
 import prisma from '../utils/prisma';
+import { SpotifyRequest } from '../middlewares/spotify.middleware';
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3001';
 
@@ -84,29 +84,19 @@ export const spotifyCallback = async (req: Request, res: Response): Promise<void
   }
 };
 
-export const syncTracks = async (req: Request, res: Response): Promise<void> => {
+export const syncTracks = async (req: SpotifyRequest, res: Response): Promise<void> => {
   try {
     const { internalPlaylistId, spotifyPlaylistId } = req.body;
-
     const userId = req.user?.userId as string;
+
+    const accessToken = req.spotifyAccessToken!;
 
     if (!internalPlaylistId || !spotifyPlaylistId) {
       res.status(400).json({ error: 'Missing playlist IDs' });
       return;
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: userId }
-    });
-
-    if (!user || !user.spotifyAccessToken) {
-      res.status(401).json({ error: 'User not connected to Spotify' });
-      return;
-    }
-
-    // TODO: Dodać sprawdzenie czy token nie wygasł
-
-    const rawTracks = await spotifyService.fetchPlaylistTracks(user.spotifyAccessToken, spotifyPlaylistId);
+    const rawTracks = await spotifyService.fetchPlaylistTracks(accessToken, spotifyPlaylistId);
 
     const result = await playlistService.syncSpotifyTracksToPlaylist(
       userId,
@@ -121,10 +111,6 @@ export const syncTracks = async (req: Request, res: Response): Promise<void> => 
 
   } catch (error: any) {
     console.error('Sync Error:', error);
-    if (error.response?.status === 401) {
-      res.status(401).json({ error: 'Spotify token expired. Please reconnect.' });
-      return;
-    }
     res.status(500).json({ error: error.message || 'Failed to sync tracks' });
   }
 };
