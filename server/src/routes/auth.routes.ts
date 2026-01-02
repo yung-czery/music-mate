@@ -10,6 +10,6 @@ router.post('/logout', logout);
 
 router.get('/me', authenticateToken, getMe);
 router.put('/', authenticateToken, updateUser);
-router.delete('/', authenticateToken, deleteUser, logout);
+router.delete('/', authenticateToken, deleteUser);
 
 export default router;
