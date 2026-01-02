@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { searchTracks } from '../services/spotify.service';
 import * as spotifyService from '../services/spotify.service';
 import * as userService from '../services/user.service';
 import * as playlistService from '../services/playlist.service';
