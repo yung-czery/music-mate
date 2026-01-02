@@ -17,6 +17,7 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     isAuthenticated: (state) => !!state.user,
+    isSpotifyConnected: state => state.user?.isSpotifyConnected,
   },
 
   actions: {

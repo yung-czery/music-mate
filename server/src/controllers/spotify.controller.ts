@@ -69,6 +69,7 @@ export const spotifyCallback = async (req: Request, res: Response): Promise<void
     await prisma.user.update({
       where: { id: userId },
       data: {
+        isSpotifyConnected: true,
         spotifyAccessToken: tokenData.access_token,
         spotifyRefreshToken: tokenData.refresh_token,
         spotifyTokenExpiresAt: expiresAt

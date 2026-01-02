@@ -3,6 +3,23 @@ definePageMeta({
   middleware: 'auth',
 });
 
+const route = useRoute();
+const router = useRouter();
+const toast = useToast();
+
+onMounted(() => {
+  if (route.query.import === 'success') {
+    toast.add({
+      title: 'Sukces!',
+      description: 'Połączono ze Spotify i zaimportowano playlisty.',
+      color: 'success',
+      icon: 'i-heroicons-check-circle',
+    });
+
+    router.replace({ query: { ...route.query, import: undefined } });
+  }
+});
+
 const links = ref([
   {
     label: 'Odkrywaj playlisty',

@@ -5,6 +5,7 @@ definePageMeta({
 
 const { data, refresh } = useFetch<Playlist[]>('api/playlists');
 
+const auth = useAuthStore();
 const toast = useToast();
 const addModalOpen = ref(false);
 
@@ -16,7 +17,7 @@ const handleImport = async () => {
 
     toast.add({
       title: 'Sukces!',
-      description: 'Playlisty zostały zaimportowane pomyślnie',
+      description: 'Playlisty zostały zaimportowane pomyślnie. Teraz możesz zaimportować utwory dla nich.',
       color: 'success',
       icon: 'i-heroicons-check-circle',
     });
@@ -41,11 +42,11 @@ const handleImport = async () => {
 };
 
 const links = ref([
-  {
+  ...(auth.isSpotifyConnected ? [{
     label: 'Importuj ze spotify',
     icon: 'i-simple-icons-spotify',
     onClick: handleImport,
-  },
+  }] : []),
   {
     label: 'Dodaj nową playlistę',
     icon: 'i-lucide-plus',
