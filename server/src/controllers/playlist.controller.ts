@@ -6,6 +6,11 @@ export const createPlaylist = async (req: Request, res: Response): Promise<void>
   try {
     const { name, description, isPublic } = req.body;
 
+    if (!name) {
+      res.status(400).json({ error: 'Playlist name is required' });
+      return;
+    }
+
     const userId = req.user?.userId;
 
     if (!userId) {
@@ -149,20 +154,38 @@ export const deletePlaylist = async (req: Request, res: Response): Promise<void>
     const { id } = req.params;
     const userId = req.user?.userId;
 
-    const result = await prisma.playlist.deleteMany({
-      where: {
-        id: id,
-        userId: userId,
+    const playlist = await prisma.playlist.findUnique({
+      where: { id },
+      include: {
+        tracks: { select: { trackId: true } },
       },
     });
 
-    if (result.count === 0) {
+    if (!playlist || playlist.userId !== userId) {
       res.status(404).json({ error: 'Playlist not found or access denied' });
       return;
     }
 
+    await prisma.$transaction(async (tx) => {
+      const trackIdsToCheck = playlist.tracks.map(pt => pt.trackId);
+
+      await tx.playlist.delete({
+        where: { id },
+      });
+
+      if (trackIdsToCheck.length > 0) {
+        await tx.track.deleteMany({
+          where: {
+            id: { in: trackIdsToCheck },
+            playlists: { none: {} },
+          },
+        });
+      }
+    });
+
     res.json({ message: 'Playlist deleted successfully' });
   } catch (error) {
+    console.error('Delete error:', error);
     res.status(500).json({ error: 'Could not delete playlist' });
   }
 };

@@ -1,17 +1,7 @@
 <script setup lang="ts">
-// Typy danych (dostosuj do swojego modelu z Prisma)
-export interface Track {
-  id: string;
-  title: string;
-  artist: string;
-  album: string;
-  coverUrl?: string | null;
-  durationMs: number;
-}
-
 const props = defineProps<{
   track: Track;
-  index: number; // Potrzebne do wyświetlania numeru (1, 2, 3)
+  index: number;
 }>();
 
 const emit = defineEmits<{
@@ -19,7 +9,6 @@ const emit = defineEmits<{
   (e: 'remove', trackId: string): void;
 }>();
 
-// Menu akcji (3 kropki)
 const items = [
   [{
     label: 'Dodaj do kolejki',
@@ -29,18 +18,9 @@ const items = [
     label: 'Usuń z playlisty',
     icon: 'i-lucide-trash-2',
     color: 'error' as const,
-    // Emitujemy zdarzenie do rodzica, żeby obsłużył usunięcie
-    click: () => emit('remove', props.track.id)
+    onClick: () => emit('remove', props.track.id)
   }]
 ];
-
-// Formatowanie czasu (ms -> mm:ss)
-const formattedDuration = computed(() => {
-  if (!props.track.durationMs) return '-:-';
-  const minutes = Math.floor(props.track.durationMs / 60000);
-  const seconds = ((props.track.durationMs % 60000) / 1000).toFixed(0);
-  return `${minutes}:${Number(seconds) < 10 ? '0' : ''}${seconds}`;
-});
 </script>
 
 <template>
@@ -68,7 +48,7 @@ const formattedDuration = computed(() => {
           :src="track.coverUrl || '/placeholder.png'"
           alt="Cover"
           class="w-10 h-10 rounded object-cover bg-gray-200 shrink-0 shadow-sm"
-      />
+      >
 
       <div class="min-w-0">
         <p class="font-medium text-gray-900 dark:text-gray-100 truncate text-sm">
@@ -85,7 +65,7 @@ const formattedDuration = computed(() => {
     </div>
 
     <div class="text-xs text-gray-400 font-mono w-10 text-right shrink-0">
-      {{ formattedDuration }}
+      {{ formatDuration(track.durationMs) }}
     </div>
 
     <div class="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">

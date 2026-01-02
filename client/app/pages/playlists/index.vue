@@ -1,18 +1,18 @@
 <script setup lang="ts">
 
-const open = ref(false);
+const addModalOpen = ref(false);
 
 const links = ref([
   {
     label: 'Dodaj nową playlistę',
     icon: 'i-lucide-plus',
     onClick: () => {
-      open.value = true;
+      addModalOpen.value = true;
     },
   },
 ]);
 
-const { data } = useFetch<Playlist[]>('api/playlists');
+const { data, refresh } = useFetch<Playlist[]>('api/playlists');
 </script>
 
 <template>
@@ -29,8 +29,9 @@ const { data } = useFetch<Playlist[]>('api/playlists');
       </UPageGrid>
     </UPageBody>
 
-    <LazyPlaylistAddFormModal
-        v-model:open="open"
+    <LazyPlaylistAddModal
+        v-model:open="addModalOpen"
+        @success="refresh"
     />
   </UPage>
 </template>
