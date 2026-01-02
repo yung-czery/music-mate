@@ -69,7 +69,7 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
           <UCheckbox v-model="state.isPublic" label="Czy playlista ma być publiczna?" class="w-full"/>
         </UFormField>
 
-        <UButton type="submit" block>
+        <UButton type="submit" block :loading="loading" icon="i-lucide-plus" :disabled="loading">
           Dodaj playlistę
         </UButton>
       </UForm>

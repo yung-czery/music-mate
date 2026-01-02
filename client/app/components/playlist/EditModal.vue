@@ -9,7 +9,9 @@ const open = defineModel<boolean>('open');
 const emit = defineEmits(['success']);
 
 const toast = useToast();
-const loading = ref(false);
+const router = useRouter();
+const loadingEdit = ref(false);
+const loadingDelete = ref(false);
 
 const schema = z.object({
   name: z.string('Nazwa jest wymagana'),
@@ -34,7 +36,7 @@ watch(() => props.playlist, (newVal) => {
 
 const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
   try {
-    loading.value = true;
+    loadingEdit.value = true;
     await $fetch(`/api/playlists/${props.playlist.id}`, {
       method: 'PATCH',
       body: event.data,
@@ -47,7 +49,28 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
     console.error(e);
     toast.add({ title: 'Błąd podczas edytowania playlisty', color: 'error' });
   } finally {
-    loading.value = false;
+    loadingEdit.value = false;
+  }
+};
+
+const handleDelete = async () => {
+  if (!confirm('Czy na pewno chcesz bezpowrotnie usunąć tę playlistę?')) {
+    return;
+  }
+
+  try {
+    loadingDelete.value = true;
+    await $fetch(`/api/playlists/${props.playlist.id}`, {
+      method: 'DELETE',
+    });
+    toast.add({ title: 'Pomyślnie usunięto playlistę', color: 'success' });
+    open.value = false;
+    router.push('/playlists');
+  } catch (e) {
+    console.error(e);
+    toast.add({ title: 'Błąd podczas usuwania playlisty', color: 'error' });
+  } finally {
+    loadingDelete.value = false;
   }
 };
 </script>
@@ -80,10 +103,15 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
           <UCheckbox v-model="state.isPublic" label="Czy playlista ma być publiczna?" class="w-full"/>
         </UFormField>
 
-        <UButton type="submit" block>
+        <UButton type="submit" block :loading="loadingEdit" icon="i-lucide-save" :disabled="loadingEdit">
           Edytuj playlistę
         </UButton>
       </UForm>
+
+      <UButton
+          label="Usuń playlistę" block class="mt-4" color="error" variant="outline" icon="i-lucide-trash"
+          @click="handleDelete"
+      />
     </template>
   </UModal>
 </template>
