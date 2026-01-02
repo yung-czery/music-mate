@@ -2,17 +2,33 @@
 const { data, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`);
 
 const toast = useToast();
+const auth = useAuthStore();
 const loading = ref(false);
+const editModalOpen = ref(false);
 
 const links = computed(() => {
-  if (!data.value?.spotifyId) return [];
+  const result = [];
 
-  return [{
-    label: 'Podejrzyj na Spotify',
-    icon: 'i-simple-icons-spotify',
-    to: `https://open.spotify.com/playlist/${data.value.spotifyId}`,
-    target: '_blank',
-  }];
+  if (auth.user?.id === data.value?.userId) {
+    result.push({
+      label: 'Edytuj playlistę',
+      icon: 'i-lucide-edit-2',
+      onClick: () => {
+        editModalOpen.value = true;
+      }
+    });
+  }
+
+  if (data.value?.spotifyId) {
+    result.push({
+      label: 'Otwórz w Spotify',
+      icon: 'i-simple-icons-spotify',
+      href: `https://open.spotify.com/playlist/${data.value.spotifyId}`,
+      target: '_blank',
+    });
+  }
+
+  return result;
 });
 
 const handleImport = async () => {
@@ -87,6 +103,10 @@ const handleImport = async () => {
 
       <UButton icon="i-lucide-import" :loading="loading" @click="handleImport">Zaimportuj utwory</UButton>
     </UContainer>
+
+    <LazyPlaylistEditModal
+        v-model:open="editModalOpen"
+    />
   </UPage>
 </template>
 

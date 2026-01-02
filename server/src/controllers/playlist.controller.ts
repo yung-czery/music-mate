@@ -6,6 +6,11 @@ export const createPlaylist = async (req: Request, res: Response): Promise<void>
   try {
     const { name, description, isPublic } = req.body;
 
+    if (!name) {
+      res.status(400).json({ error: 'Playlist name is required' });
+      return;
+    }
+
     const userId = req.user?.userId;
 
     if (!userId) {

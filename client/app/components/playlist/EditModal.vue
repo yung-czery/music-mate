@@ -5,7 +5,7 @@ const open = defineModel<boolean>('open');
 <template>
   <UModal
       v-model:open="open"
-      title="Dodaj nową playlistę"
+      title="Edytuj playlistę"
       :close="{
           color: 'primary',
           variant: 'outline',
