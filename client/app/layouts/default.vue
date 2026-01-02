@@ -28,16 +28,19 @@ const userItems = computed<NavigationMenuItem[]>(() => [
     slot: 'account',
     disabled: true,
   }],
-  [{
-    label: 'Importuj ze Spotify',
-    icon: 'i-simple-icons-spotify',
-    to: `${API_URL}/api/spotify/login`,
-    external: true,
-  }, {
-    label: 'Ustawienia',
-    icon: 'i-heroicons-cog-6-tooth',
-    to: '/settings',
-  }],
+  [
+    ...(!auth.isSpotifyConnected ? [{
+      label: 'Połącz konto ze Spotify',
+      icon: 'i-simple-icons-spotify',
+      to: `${API_URL}/api/spotify/login`,
+      external: true,
+    }] : []),
+    {
+      label: 'Ustawienia',
+      icon: 'i-heroicons-cog-6-tooth',
+      to: '/settings',
+    }
+  ],
   [{
     label: 'Wyloguj się',
     icon: 'i-heroicons-arrow-right-start-on-rectangle',

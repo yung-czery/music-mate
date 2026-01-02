@@ -18,7 +18,7 @@ model User {
   email                 String    @unique
   password              String
   name                  String?
-  spotifyId             String?   @unique
+  isSpotifyConnected    Boolean   @default(false)
   spotifyAccessToken    String?   @db.Text
   spotifyRefreshToken   String?   @db.Text
   spotifyTokenExpiresAt DateTime?
