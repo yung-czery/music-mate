@@ -106,6 +106,8 @@ const handleImport = async () => {
 
     <LazyPlaylistEditModal
         v-model:open="editModalOpen"
+        :playlist="data"
+        @success="refresh"
     />
   </UPage>
 </template>
