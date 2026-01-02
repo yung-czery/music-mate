@@ -66,7 +66,7 @@ const handleImport = async () => {
     if (e.response?.status === 401) {
       toast.add({
         title: 'Błąd!',
-        description: 'Twoje konto Spotify nie jest połączone lub utraciło ważność.',
+        description: 'Twoje konto Spotify nie jest połączone.',
         color: 'error',
         icon: 'i-heroicons-x-circle',
       });

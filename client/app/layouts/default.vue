@@ -29,7 +29,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
     disabled: true,
   }],
   [{
-    label: 'Importuj ze Spotify',
+    label: 'Połącz konto ze Spotify',
     icon: 'i-simple-icons-spotify',
     to: `${API_URL}/api/spotify/login`,
     external: true,

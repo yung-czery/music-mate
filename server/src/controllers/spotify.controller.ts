@@ -114,3 +114,17 @@ export const syncTracks = async (req: SpotifyRequest, res: Response): Promise<vo
     res.status(500).json({ error: error.message || 'Failed to sync tracks' });
   }
 };
+
+export const importPlaylists = async (req: SpotifyRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.userId as string;
+    const accessToken = req.spotifyAccessToken!;
+
+    await userService.importSpotifyPlaylists(userId, accessToken);
+
+    res.json({ message: 'Playlists imported successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Something went wrong during import');
+  }
+}
