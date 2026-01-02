@@ -97,7 +97,8 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
         id: true,
         email: true,
         name: true,
-      }
+        createdAt: true,
+      },
     });
 
     if (!user) {
@@ -119,4 +120,38 @@ export const logout = (req: Request, res: Response): void => {
   });
 
   res.status(200).json({ message: 'Logged out successfully' });
+};
+
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  const userId = req.user?.userId;
+  const { name, email } = req.body;
+
+  if (!userId) {
+    res.status(401).json({ error: 'Not authenticated' });
+    return;
+  }
+
+  try {
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: { name, email },
+      select: { id: true, name: true, email: true },
+    });
+    res.json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: 'Nie udało się zaktualizować profilu' });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+
+  try {
+    await prisma.user.delete({
+      where: { id: userId }
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Nie udało się usunąć konta' });
+  }
 };
