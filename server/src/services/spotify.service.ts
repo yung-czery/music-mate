@@ -109,31 +109,6 @@ export const exchangeCodeForToken = async (code: string) => {
   }
 };
 
-export const refreshAccessToken = async (refreshToken: string) => {
-  const authBuffer = Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64');
-
-  try {
-    const response = await axios.post(
-      'https://accounts.spotify.com/api/token',
-      qs.stringify({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-      }),
-      {
-        headers: {
-          Authorization: `Basic ${authBuffer}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-      }
-    );
-
-    return response.data;
-  } catch (error) {
-    console.error('❌ Failed to refresh Spotify token', error);
-    throw new Error('Could not refresh token');
-  }
-};
-
 export const fetchUserSpotifyPlaylists = async (accessToken: string) => {
   try {
     const response = await axios.get<{items: any[];}>('https://api.spotify.com/v1/me/playlists', {
