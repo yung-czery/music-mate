@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '#ui/components/NavigationMenu.vue';
 
-const API_URL = useRuntimeConfig().public.apiUrl;
 const auth = useAuthStore();
 
 const items = computed<NavigationMenuItem[]>(() => [
