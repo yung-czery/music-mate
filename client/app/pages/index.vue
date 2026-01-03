@@ -15,9 +15,15 @@ onMounted(() => {
       color: 'success',
       icon: 'i-heroicons-check-circle',
     });
-
-    router.replace({ query: { ...route.query, import: undefined } });
+  } else if (route.query.import === 'error') {
+    toast.add({
+      title: 'Błąd!',
+      description: 'Wystąpił błąd podczas łączenia ze Spotify. Spróbuj ponownie.',
+      color: 'error',
+      icon: 'i-heroicons-x-circle',
+    });
   }
+  router.replace({ query: { ...route.query, import: undefined } });
 });
 
 const links = ref([

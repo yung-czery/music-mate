@@ -32,7 +32,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
     ...(!auth.isSpotifyConnected ? [{
       label: 'Połącz konto ze Spotify',
       icon: 'i-simple-icons-spotify',
-      to: `${API_URL}/api/spotify/login`,
+      to: `/spotify-login`,
       external: true,
     }] : []),
     {
