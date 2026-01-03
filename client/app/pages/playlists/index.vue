@@ -3,7 +3,9 @@ definePageMeta({
   middleware: 'auth',
 });
 
-const { data, refresh } = useFetch<Playlist[]>('api/playlists');
+const { data, refresh } = useFetch<Playlist[]>('api/playlists', {
+  key: 'user-playlists'
+});
 
 const auth = useAuthStore();
 const toast = useToast();

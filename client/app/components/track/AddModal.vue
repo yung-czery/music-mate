@@ -25,6 +25,7 @@ const handleAdd = async (playlistId: string) => {
     });
 
     await refreshNuxtData(`playlist-${playlistId}`);
+    await refreshNuxtData('user-playlists');
 
     toast.add({
       title: 'Dodano!',
