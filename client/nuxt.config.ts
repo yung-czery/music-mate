@@ -6,6 +6,20 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
 
+  app: {
+    head: {
+      title: 'MusicMate',
+      meta: [
+        { name: 'description', content: 'Twoja ulubiona aplikacja do zarządzania playlistami Spotify.' },
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+      ],
+      link: [
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.svg' }
+      ]
+    }
+  },
+
   devServer: {
     port: 3001,
   },
