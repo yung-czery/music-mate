@@ -1,4 +1,5 @@
 <script setup lang="ts">
+const player = usePlayerStore();
 </script>
 
 <template>
@@ -12,16 +13,14 @@
         leave-to-class="translate-y-full opacity-0"
     >
       <div
-          v-if="open"
+          v-if="player.isVisible"
           class="fixed bottom-4 left-4 right-4 z-60 flex justify-center"
       >
-        <div class="relative w-full max-w-3xl shadow-2xl rounded-xl overflow-hidden bg-black border border-gray-800">
-
+        <div class="relative w-full max-w-3xl shadow-2xl rounded-2xl overflow-hidden bg-black border border-gray-800">
           <iframe
-              :src="embedUrl"
+              :src="player.embedUrl"
               width="100%"
               height="152"
-              frameBorder="0"
               :allowfullscreen="false"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
               loading="lazy"
@@ -34,7 +33,7 @@
                 color="neutral"
                 variant="ghost"
                 size="xl"
-                @click="open = false"
+                @click="player.close()"
             />
           </div>
 

@@ -10,6 +10,7 @@ type SearchResponse = {
   tracks: SpotifyTrack[]
 }
 
+const player = usePlayerStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -93,7 +94,7 @@ const addToPlaylist = (track: SpotifyTrack) => {
   trackToAdd.value = track;
   isModalOpen.value = true;
   open.value = false;
-}
+};
 </script>
 
 <template>
@@ -159,7 +160,7 @@ const addToPlaylist = (track: SpotifyTrack) => {
                 <img :src="track.image" alt="Album" class="w-full h-full object-cover rounded shadow-sm">
                 <div
                     class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center rounded backdrop-blur-[1px]">
-                  <UIcon name="i-heroicons-play" class="text-white w-6 h-6"/>
+                  <UIcon name="i-heroicons-play" class="text-white w-6 h-6 cursor-pointer" @click="player.play(track.id)"/>
                 </div>
               </div>
 

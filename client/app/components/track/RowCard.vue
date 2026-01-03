@@ -1,26 +1,14 @@
 <script setup lang="ts">
-const props = defineProps<{
+defineProps<{
   track: Track;
   index: number;
 }>();
 
+const player = usePlayerStore();
+
 const emit = defineEmits<{
-  (e: 'play', track: Track): void;
   (e: 'remove', trackId: string): void;
 }>();
-
-const items = [
-  [{
-    label: 'Dodaj do kolejki',
-    icon: 'i-lucide-list-plus'
-  }],
-  [{
-    label: 'Usuń z playlisty',
-    icon: 'i-lucide-trash-2',
-    color: 'error' as const,
-    onClick: () => emit('remove', props.track.id)
-  }]
-];
 </script>
 
 <template>
@@ -39,7 +27,7 @@ const items = [
           size="xs"
           class="hidden group-hover:flex"
           :padded="false"
-          @click="emit('play', track)"
+          @click="player.play(track.spotifyId)"
       />
     </div>
 
@@ -69,14 +57,13 @@ const items = [
     </div>
 
     <div class="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-      <UDropdownMenu :items="items">
-        <UButton
-            color="neutral"
-            variant="ghost"
-            icon="i-lucide-ellipsis"
-            size="xs"
-        />
-      </UDropdownMenu>
+      <UButton
+          color="error"
+          variant="ghost"
+          icon="i-lucide-trash-2"
+          size="xs"
+          @click="emit('remove', track.id)"
+      />
     </div>
 
   </div>
