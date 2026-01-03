@@ -5,7 +5,7 @@ import * as playlistService from '../services/playlist.service';
 import prisma from '../utils/prisma';
 import { SpotifyRequest } from '../middlewares/spotify.middleware';
 
-const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3001';
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3001';
 
 export const search = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -78,7 +78,7 @@ export const spotifyCallback = async (req: Request, res: Response): Promise<void
 
     await userService.importSpotifyPlaylists(userId, tokenData.access_token);
 
-    res.redirect(`${FRONTEND_URL}?import=success`);
+    res.redirect(`${CLIENT_URL}?import=success`);
   } catch (err) {
     console.error(err);
     res.status(500).send('Something went wrong during import');

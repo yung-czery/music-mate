@@ -83,6 +83,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
       <UContainer class="py-8">
         <slot/>
       </UContainer>
+      <SpotifyPlayerModal />
     </UMain>
 
     <UFooter>
