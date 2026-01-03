@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { NavigationMenuItem } from '#ui/components/NavigationMenu.vue';
 
-const API_URL = useRuntimeConfig().public.apiUrl;
 const auth = useAuthStore();
 
 const items = computed<NavigationMenuItem[]>(() => [
@@ -32,7 +31,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
     ...(!auth.isSpotifyConnected ? [{
       label: 'Połącz konto ze Spotify',
       icon: 'i-simple-icons-spotify',
-      to: `${API_URL}/api/spotify/login`,
+      to: `/spotify-login`,
       external: true,
     }] : []),
     {
