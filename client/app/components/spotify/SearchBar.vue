@@ -95,6 +95,12 @@ const addToPlaylist = (track: SpotifyTrack) => {
   isModalOpen.value = true;
   open.value = false;
 };
+
+const onRowClick = (trackId: string) => {
+  if (window.innerWidth < 640) {
+    player.play(trackId);
+  }
+};
 </script>
 
 <template>
@@ -102,7 +108,7 @@ const addToPlaylist = (track: SpotifyTrack) => {
     <UPopover
         v-model:open="open"
         :dismissible="false"
-        :ui="{ content: 'w-(--reka-popper-anchor-width) p-4' }"
+        :ui="{ content: 'w-[calc(100vw-1rem)] sm:w-[var(--reka-popper-anchor-width)] max-w-none p-2 sm:p-4' }"
     >
       <template #anchor>
         <UInput
@@ -131,7 +137,7 @@ const addToPlaylist = (track: SpotifyTrack) => {
       </template>
 
       <template #content>
-        <UContainer ref="popoverContentRef">
+        <div ref="popoverContentRef">
           <div v-if="status === 'pending'" class="space-y-4">
             <USkeleton v-for="i in limit" :key="i" class="h-16 w-full"/>
           </div>
@@ -155,32 +161,38 @@ const addToPlaylist = (track: SpotifyTrack) => {
                 :key="track.id"
                 class="group flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
             >
+              <div class="flex grow" @click="onRowClick(track.id)">
+                <div class="relative w-10 h-10 sm:w-12 sm:h-12 mr-3 shrink-0">
+                  <img :src="track.image" alt="Album" class="w-full h-full object-cover rounded shadow-sm">
+                  <div
+                      class="absolute inset-0 bg-black/40 hidden sm:group-hover:flex items-center justify-center rounded backdrop-blur-[1px]">
+                    <UIcon name="i-heroicons-play" class="text-white w-6 h-6 cursor-pointer" @click.stop="player.play(track.id)"/>
+                  </div>
+                </div>
 
-              <div class="relative w-12 h-12 mr-4 shrink-0">
-                <img :src="track.image" alt="Album" class="w-full h-full object-cover rounded shadow-sm">
-                <div
-                    class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center rounded backdrop-blur-[1px]">
-                  <UIcon name="i-heroicons-play" class="text-white w-6 h-6 cursor-pointer" @click="player.play(track.id)"/>
+                <div class="flex-1 min-w-0 pr-2">
+                  <p class="font-medium text-sm sm:text-base text-ellipsis truncate text-gray-900 dark:text-gray-100">
+                    {{ track.name }}
+                  </p>
+                  <p class="text-xs sm:text-sm text-gray-500 text-ellipsis truncate">
+                    {{ track.artist }}
+                  </p>
                 </div>
               </div>
 
-              <div class="flex-1 min-w-0">
-                <p class="font-medium truncate text-gray-900 dark:text-gray-100">
-                  {{ track.name }}
-                </p>
-                <p class="text-sm text-gray-500 truncate">
-                  {{ track.artist }} • {{ track.album }}
-                </p>
-              </div>
-
-              <div class="hidden sm:block text-sm text-gray-400 mx-4 font-mono">
+              <div class="hidden sm:block text-sm text-gray-400 mx-2 font-mono">
                 {{ formatDuration(track.duration_ms) }}
               </div>
 
-              <div class="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <UTooltip text="Dodaj do playlisty">
-                  <UButton icon="i-heroicons-plus" variant="ghost" size="sm" @click="addToPlaylist(track)"/>
-                </UTooltip>
+              <div
+                  class="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                <UButton
+                    icon="i-heroicons-plus"
+                    variant="ghost"
+                    size="sm"
+                    class="bg-gray-100 dark:bg-gray-800 sm:bg-transparent"
+                    @click="addToPlaylist(track)"
+                />
               </div>
 
             </div>
@@ -209,7 +221,7 @@ const addToPlaylist = (track: SpotifyTrack) => {
                 @click="page++"
             />
           </div>
-        </UContainer>
+        </div>
       </template>
     </UPopover>
     <LazyTrackAddModal
