@@ -31,6 +31,7 @@ const links = ref([
     label: 'Odkrywaj playlisty',
     to: '/explore',
     icon: 'i-lucide-compass',
+    class: 'w-full sm:w-auto justify-center',
   },
   {
     label: 'Twoja biblioteka',
@@ -38,6 +39,7 @@ const links = ref([
     color: 'neutral',
     variant: 'subtle',
     trailingIcon: 'i-lucide-arrow-right',
+    class: 'w-full sm:w-auto justify-center',
   },
 ]);
 
