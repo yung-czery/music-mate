@@ -64,6 +64,7 @@ const links = ref([
     label: 'Importuj ze spotify',
     icon: 'i-simple-icons-spotify',
     onClick: handleImport,
+    class: 'w-full sm:w-auto justify-center',
   }] : []),
   {
     label: 'Dodaj nową playlistę',
@@ -71,6 +72,7 @@ const links = ref([
     onClick: () => {
       addModalOpen.value = true;
     },
+    class: 'w-full sm:w-auto justify-center',
   },
 ]);
 
