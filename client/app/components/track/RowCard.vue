@@ -9,6 +9,12 @@ const player = usePlayerStore();
 const emit = defineEmits<{
   (e: 'remove', trackId: string): void;
 }>();
+
+const onRowClick = (trackId: string) => {
+  if (window.innerWidth < 640) {
+    player.play(trackId);
+  }
+};
 </script>
 
 <template>
@@ -31,12 +37,11 @@ const emit = defineEmits<{
       />
     </div>
 
-    <div class="flex items-center gap-3 flex-1 min-w-0">
+    <div class="flex items-center gap-3 flex-1 min-w-0" @click="onRowClick(track.spotifyId)">
       <img
           :src="track.coverUrl || '/placeholder.png'"
           alt="Cover"
           class="w-10 h-10 rounded object-cover bg-gray-200 shrink-0 shadow-sm cursor-pointer hover:opacity-80 transition-opacity"
-          @click.stop="player.play(track.spotifyId)"
       >
 
       <div class="min-w-0 flex-1">
