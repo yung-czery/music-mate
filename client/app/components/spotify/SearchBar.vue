@@ -161,7 +161,7 @@ const onRowClick = (trackId: string) => {
                 :key="track.id"
                 class="group flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition border border-transparent hover:border-gray-200 dark:hover:border-gray-700"
             >
-              <div class="flex grow" @click="onRowClick(track.id)">
+              <div class="flex text-ellipsis truncate grow" @click="onRowClick(track.id)">
                 <div class="relative w-10 h-10 sm:w-12 sm:h-12 mr-3 shrink-0">
                   <img :src="track.image" alt="Album" class="w-full h-full object-cover rounded shadow-sm">
                   <div
