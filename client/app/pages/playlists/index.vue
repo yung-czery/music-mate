@@ -4,7 +4,7 @@ definePageMeta({
 });
 
 const { data, refresh } = useFetch<Playlist[]>('api/playlists', {
-  key: 'user-playlists'
+  key: 'user-playlists',
 });
 
 const auth = useAuthStore();
@@ -43,11 +43,28 @@ const handleImport = async () => {
   }
 };
 
+const handleDelete = async (playlistId: string) => {
+  if (!confirm('Czy na pewno chcesz bezpowrotnie usunąć tę playlistę?')) {
+    return;
+  }
+  try {
+    await $fetch(`/api/playlists/${playlistId}`, {
+      method: 'DELETE',
+    });
+    await refresh();
+    toast.add({ title: 'Pomyślnie usunięto playlistę', color: 'success', icon: 'i-heroicons-check-circle' });
+  } catch (e) {
+    console.error(e);
+    toast.add({ title: 'Błąd podczas usuwania playlisty', color: 'error', icon: 'i-heroicons-x-circle' });
+  }
+};
+
 const links = ref([
   ...(auth.isSpotifyConnected ? [{
     label: 'Importuj ze spotify',
     icon: 'i-simple-icons-spotify',
     onClick: handleImport,
+    class: 'w-full sm:w-auto justify-center',
   }] : []),
   {
     label: 'Dodaj nową playlistę',
@@ -55,6 +72,7 @@ const links = ref([
     onClick: () => {
       addModalOpen.value = true;
     },
+    class: 'w-full sm:w-auto justify-center',
   },
 ]);
 
@@ -70,6 +88,7 @@ const links = ref([
             v-for="playlist in data"
             :key="playlist.id"
             :playlist="playlist"
+            @remove="handleDelete"
         />
       </UPageGrid>
     </UPageBody>

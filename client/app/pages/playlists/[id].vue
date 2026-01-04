@@ -16,30 +16,23 @@ const loadingImport = ref(false);
 const loadingRemoveTrack = ref(false);
 const editModalOpen = ref(false);
 
-const links = computed(() => {
-  const result = [];
-
-  if (auth.user?.id === data.value?.userId) {
-    result.push({
-      label: 'Edytuj playlistę',
-      icon: 'i-lucide-edit-2',
-      onClick: () => {
-        editModalOpen.value = true;
-      },
-    });
-  }
-
-  if (data.value?.spotifyId) {
-    result.push({
-      label: 'Otwórz w Spotify',
-      icon: 'i-simple-icons-spotify',
-      href: `https://open.spotify.com/playlist/${data.value.spotifyId}`,
-      target: '_blank',
-    });
-  }
-
-  return result;
-});
+const links = computed(() => [
+  ...(auth.user?.id === data.value?.userId ? [{
+    label: 'Edytuj playlistę',
+    icon: 'i-lucide-edit-2',
+    onClick: () => {
+      editModalOpen.value = true;
+    },
+    class: 'grow justify-center',
+  }] : []),
+  ...(data.value?.spotifyId ? [{
+    label: 'Otwórz w Spotify',
+    icon: 'i-simple-icons-spotify',
+    href: `https://open.spotify.com/playlist/${data.value.spotifyId}`,
+    target: '_blank',
+    class: 'grow justify-center',
+  }] : []),
+]);
 
 const handleImport = async () => {
   loadingImport.value = true;
