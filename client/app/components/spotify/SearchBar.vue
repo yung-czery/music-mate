@@ -17,7 +17,7 @@ const route = useRoute();
 const q = ref(route.query.q?.toString() || '');
 const open = ref(false);
 const page = ref(1);
-const limit = 5;
+const limit = 4;
 const isModalOpen = ref(false);
 const trackToAdd = ref<SpotifyTrack | null>(null);
 
