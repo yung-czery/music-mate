@@ -14,11 +14,11 @@ const items = computed<NavigationMenuItem[]>(() => [
     to: '/explore',
     icon: 'i-lucide-compass',
   },
-  {
+  ...(auth.isAuthenticated) ? [{
     label: 'Biblioteka',
     to: '/playlists',
     icon: 'i-heroicons-musical-note',
-  },
+  }] : [],
 ]);
 
 const userItems = computed<NavigationMenuItem[]>(() => [
@@ -68,13 +68,13 @@ const userItems = computed<NavigationMenuItem[]>(() => [
       <template #body>
         <UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5"/>
 
-        <div class="text-left w-full truncate mt-5">
+        <div v-if="auth.isAuthenticated" class="text-left w-full truncate mt-5">
           <p class="text-xs text-gray-500">Zalogowany jako</p>
           <p class="font-medium text-gray-900 dark:text-white truncate">
             {{ auth.user?.name }}
           </p>
         </div>
-        <UNavigationMenu :items="userItems" orientation="vertical" class="-mx-2.5"/>
+        <UNavigationMenu v-if="auth.isAuthenticated" :items="userItems" orientation="vertical" class="-mx-2.5"/>
       </template>
     </UHeader>
 
