@@ -3,7 +3,7 @@ definePageMeta({
   middleware: 'auth',
 });
 
-const { data, refresh, pending } = useFetch<Playlist[]>('api/playlists', {
+const { data: playlists, refresh, pending } = useFetch<Playlist[]>('api/playlists', {
   key: 'user-playlists',
 });
 
@@ -87,9 +87,9 @@ const links = ref([
         <USkeleton v-for="n in 6" :key="n" class="h-64 w-full rounded-lg" />
       </UPageGrid>
 
-      <UPageGrid v-else-if="data && data.length > 0">
+      <UPageGrid v-else-if="playlists && playlists.length > 0">
         <PlaylistCard
-            v-for="playlist in data"
+            v-for="playlist in playlists"
             :key="playlist.id"
             :playlist="playlist"
             @remove="handleDelete"

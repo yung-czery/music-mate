@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { data, pending } = useFetch<Playlist[]>('/api/playlists/public');
+const { data: playlists, pending } = useFetch<Playlist[]>('/api/playlists/public');
 </script>
 
 <template>
@@ -11,9 +11,9 @@ const { data, pending } = useFetch<Playlist[]>('/api/playlists/public');
         <USkeleton v-for="n in 6" :key="n" class="h-64 w-full rounded-lg" />
       </UPageGrid>
 
-      <UPageGrid v-else-if="data && data.length > 0">
+      <UPageGrid v-else-if="playlists && playlists.length > 0">
         <PlaylistCard
-            v-for="playlist in data"
+            v-for="playlist in playlists"
             :key="playlist.id"
             :playlist="playlist"
         />

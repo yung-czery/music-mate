@@ -26,6 +26,7 @@ withDefaults(defineProps<{
     </p>
 
     <UButton
+        v-if="playlistLink"
         to="/playlists"
         icon="i-heroicons-plus"
         label="Stwórz playlistę"
