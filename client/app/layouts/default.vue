@@ -27,7 +27,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
     slot: 'account',
     disabled: true,
   }],
-  [
+  ...(auth.isAuthenticated ? [[
     ...(!auth.isSpotifyConnected ? [{
       label: 'Połącz konto ze Spotify',
       icon: 'i-simple-icons-spotify',
@@ -38,14 +38,18 @@ const userItems = computed<NavigationMenuItem[]>(() => [
       label: 'Ustawienia',
       icon: 'i-heroicons-cog-6-tooth',
       to: '/settings',
-    }
-  ],
-  [{
+    },
+  ]] : []),
+  [...(auth.isAuthenticated ? [{
     label: 'Wyloguj się',
     icon: 'i-heroicons-arrow-right-start-on-rectangle',
     onSelect: () => auth.logout(),
     class: 'cursor-pointer',
-  }],
+  }] : [{
+    label: 'Zaloguj się',
+    icon: 'i-heroicons-user',
+    to: '/login',
+  }])],
 ]);
 </script>
 
@@ -59,7 +63,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
         </NuxtLink>
       </template>
 
-      <SpotifySearchBar />
+      <SpotifySearchBar/>
 
       <template #right>
         <UColorModeButton/>
@@ -74,7 +78,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
             {{ auth.user?.name }}
           </p>
         </div>
-        <UNavigationMenu v-if="auth.isAuthenticated" :items="userItems" orientation="vertical" class="-mx-2.5"/>
+        <UNavigationMenu :items="userItems" orientation="vertical" class="-mx-2.5"/>
       </template>
     </UHeader>
 
@@ -82,7 +86,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
       <UContainer class="py-8">
         <slot/>
       </UContainer>
-      <SpotifyPlayerModal />
+      <SpotifyPlayerModal/>
     </UMain>
 
     <UFooter>
