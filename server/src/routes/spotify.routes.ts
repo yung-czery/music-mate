@@ -11,7 +11,7 @@ import { ensureSpotifyAuth } from '../middlewares/spotify.middleware';
 
 const router = Router();
 
-router.get('/search', authenticateToken, search);
+router.get('/search', search);
 
 router.get('/login', authenticateToken, loginToSpotify);
 router.get('/callback', spotifyCallback);
