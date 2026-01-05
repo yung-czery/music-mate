@@ -1,11 +1,9 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: 'auth',
-});
-
 const route = useRoute();
 const router = useRouter();
 const toast = useToast();
+
+const auth = useAuthStore();
 
 onMounted(() => {
   if (route.query.import === 'success') {
@@ -26,21 +24,28 @@ onMounted(() => {
   router.replace({ query: { ...route.query, import: undefined } });
 });
 
-const links = ref([
+const links = computed(() => [
   {
     label: 'Odkrywaj playlisty',
     to: '/explore',
     icon: 'i-lucide-compass',
     class: 'w-full sm:w-auto justify-center',
   },
-  {
+  ...(auth.isAuthenticated) ? [{
     label: 'Twoja biblioteka',
     to: '/playlists',
     color: 'neutral',
     variant: 'subtle',
     trailingIcon: 'i-lucide-arrow-right',
     class: 'w-full sm:w-auto justify-center',
-  },
+  }] : [{
+    label: 'Zaloguj się',
+    to: '/login',
+    color: 'neutral',
+    variant: 'subtle',
+    trailingIcon: 'i-lucide-arrow-right',
+    class: 'w-full sm:w-auto justify-center',
+  }],
 ]);
 
 const cards = ref([

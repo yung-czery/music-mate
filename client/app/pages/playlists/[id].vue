@@ -1,12 +1,8 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: 'auth',
-});
-
 const route = useRoute();
 const playlistId = route.params.id as string;
 
-const { data, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`, {
+const { data: playlist, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`, {
   key: `playlist-${playlistId}`,
 });
 
@@ -17,7 +13,7 @@ const loadingRemoveTrack = ref(false);
 const editModalOpen = ref(false);
 
 const links = computed(() => [
-  ...(auth.user?.id === data.value?.userId ? [{
+  ...(auth.user?.id === playlist.value?.userId ? [{
     label: 'Edytuj playlistę',
     icon: 'i-lucide-edit-2',
     onClick: () => {
@@ -25,10 +21,10 @@ const links = computed(() => [
     },
     class: 'grow justify-center',
   }] : []),
-  ...(data.value?.spotifyId ? [{
+  ...(playlist.value?.spotifyId ? [{
     label: 'Otwórz w Spotify',
     icon: 'i-simple-icons-spotify',
-    href: `https://open.spotify.com/playlist/${data.value.spotifyId}`,
+    href: `https://open.spotify.com/playlist/${playlist.value.spotifyId}`,
     target: '_blank',
     class: 'grow justify-center',
   }] : []),
@@ -41,8 +37,8 @@ const handleImport = async () => {
     await $fetch('/api/spotify/sync', {
       method: 'POST',
       body: {
-        internalPlaylistId: data.value?.id,
-        spotifyPlaylistId: data.value?.spotifyId,
+        internalPlaylistId: playlist.value?.id,
+        spotifyPlaylistId: playlist.value?.spotifyId,
       },
     });
 
@@ -80,7 +76,7 @@ const handleRemoveTrack = async (trackId: string) => {
   loadingRemoveTrack.value = true;
 
   try {
-    await $fetch(`/api/playlists/${data.value?.id}/tracks/${trackId}`, {
+    await $fetch(`/api/playlists/${playlist.value?.id}/tracks/${trackId}`, {
       method: 'DELETE',
     });
     await refresh();
@@ -93,17 +89,17 @@ const handleRemoveTrack = async (trackId: string) => {
 </script>
 
 <template>
-  <UPage v-if="data">
+  <UPage v-if="playlist">
     <UPageHeader
-        :title="data.name"
-        :description="data.description"
-        :headline="`Autor: ${data.user?.name}` || ''"
+        :title="playlist.name"
+        :description="playlist.description"
+        :headline="`Autor: ${playlist.user?.name}` || ''"
         :links="links"
     />
 
     <UPageList>
       <TrackRowCard
-          v-for="(item, index) in data?.tracks as Track[]"
+          v-for="(item, index) in playlist?.tracks as Track[]"
           :key="item.id"
           :index="index"
           :track="item"
@@ -111,12 +107,15 @@ const handleRemoveTrack = async (trackId: string) => {
       />
     </UPageList>
 
-    <div v-if="!data?.tracks.length && !data.spotifyId" class="text-center py-10 text-gray-500">
-      Ta playlista jest pusta.
-    </div>
+    <PlaylistEmpty
+        v-if="!playlist?.tracks.length && !playlist.spotifyId"
+        title="Brak utworów"
+        :description="`Ta playlista nie zawiera żadnych utworów.${playlist.userId === auth.user?.id ? ' Dodaj korzystając z wyszukiwarki!' : ''}`"
+        :playlist-link="false"
+    />
 
     <UContainer
-        v-if="!data?.tracks.length && data.spotifyId"
+        v-if="!playlist?.tracks.length && playlist.spotifyId"
         class="flex flex-col gap-4 items-center text-center py-10 text-gray-500">
       Zaimportowałeś playlisty ze Spotify, ale nie zaimportowałeś utworów?
 
@@ -127,7 +126,7 @@ const handleRemoveTrack = async (trackId: string) => {
 
     <LazyPlaylistEditModal
         v-model:open="editModalOpen"
-        :playlist="data"
+        :playlist="playlist"
         @success="refresh"
     />
   </UPage>

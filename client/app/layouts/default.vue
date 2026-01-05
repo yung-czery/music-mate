@@ -14,11 +14,11 @@ const items = computed<NavigationMenuItem[]>(() => [
     to: '/explore',
     icon: 'i-lucide-compass',
   },
-  {
+  ...(auth.isAuthenticated) ? [{
     label: 'Biblioteka',
     to: '/playlists',
     icon: 'i-heroicons-musical-note',
-  },
+  }] : [],
 ]);
 
 const userItems = computed<NavigationMenuItem[]>(() => [
@@ -27,7 +27,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
     slot: 'account',
     disabled: true,
   }],
-  [
+  ...(auth.isAuthenticated ? [[
     ...(!auth.isSpotifyConnected ? [{
       label: 'Połącz konto ze Spotify',
       icon: 'i-simple-icons-spotify',
@@ -38,14 +38,18 @@ const userItems = computed<NavigationMenuItem[]>(() => [
       label: 'Ustawienia',
       icon: 'i-heroicons-cog-6-tooth',
       to: '/settings',
-    }
-  ],
-  [{
+    },
+  ]] : []),
+  [...(auth.isAuthenticated ? [{
     label: 'Wyloguj się',
     icon: 'i-heroicons-arrow-right-start-on-rectangle',
     onSelect: () => auth.logout(),
     class: 'cursor-pointer',
-  }],
+  }] : [{
+    label: 'Zaloguj się',
+    icon: 'i-heroicons-user',
+    to: '/login',
+  }])],
 ]);
 </script>
 
@@ -59,7 +63,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
         </NuxtLink>
       </template>
 
-      <SpotifySearchBar />
+      <SpotifySearchBar/>
 
       <template #right>
         <UColorModeButton/>
@@ -68,7 +72,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
       <template #body>
         <UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5"/>
 
-        <div class="text-left w-full truncate mt-5">
+        <div v-if="auth.isAuthenticated" class="text-left w-full truncate mt-5">
           <p class="text-xs text-gray-500">Zalogowany jako</p>
           <p class="font-medium text-gray-900 dark:text-white truncate">
             {{ auth.user?.name }}
@@ -82,7 +86,7 @@ const userItems = computed<NavigationMenuItem[]>(() => [
       <UContainer class="py-8">
         <slot/>
       </UContainer>
-      <SpotifyPlayerModal />
+      <SpotifyPlayerModal/>
     </UMain>
 
     <UFooter>

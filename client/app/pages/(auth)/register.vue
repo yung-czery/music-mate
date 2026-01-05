@@ -40,7 +40,7 @@ const handleRegister = async (event: FormSubmitEvent<Schema>) => {
       icon: 'i-heroicons-check-circle',
     });
 
-    navigateTo('/');
+    return navigateTo('/');
   } catch (e) {
     console.error(e);
     toast.add({

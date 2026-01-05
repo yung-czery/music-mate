@@ -1,9 +1,5 @@
 <script setup lang="ts">
-definePageMeta({
-  middleware: 'auth',
-});
-
-const { data } = useFetch<Playlist[]>('/api/playlists/public');
+const { data: playlists, pending } = useFetch<Playlist[]>('/api/playlists/public');
 </script>
 
 <template>
@@ -11,13 +7,23 @@ const { data } = useFetch<Playlist[]>('/api/playlists/public');
     <UPageHeader title="Przeglądaj playlisty społeczności"/>
 
     <UPageBody>
-      <UPageGrid>
+      <UPageGrid v-if="pending">
+        <USkeleton v-for="n in 6" :key="n" class="h-64 w-full rounded-lg" />
+      </UPageGrid>
+
+      <UPageGrid v-else-if="playlists && playlists.length > 0">
         <PlaylistCard
-            v-for="playlist in data"
+            v-for="playlist in playlists"
             :key="playlist.id"
             :playlist="playlist"
         />
       </UPageGrid>
+
+      <PlaylistEmpty
+          v-else
+          title="Pustki na parkiecie"
+          description="Nikt nie udostępnił jeszcze żadnej playlisty. Bądź pierwszy i podziel się swoim gustem muzycznym!"
+      />
     </UPageBody>
   </UPage>
 </template>

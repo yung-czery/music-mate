@@ -25,3 +25,23 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     res.status(403).json({ error: 'Invalid token' });
   }
 };
+
+export const optionalAuthenticateToken = (req: Request, res: Response, next: NextFunction): void => {
+  const token =
+    req.cookies?.jwt ||
+    req.headers.authorization?.split(' ')[1] ||
+    (req.query.token as string);
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as AuthUser;
+    req.user = { userId: decoded.userId };
+  } catch (error) {
+    // Ignorujemy błąd i traktujemy usera jako niezalogowanego
+  }
+
+  next();
+};

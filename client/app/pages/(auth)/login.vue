@@ -23,7 +23,7 @@ const state = reactive<Partial<Schema>>({
 const handleLogin = async (event: FormSubmitEvent<Schema>) => {
   try {
     await auth.login(event.data);
-    navigateTo('/');
+    return navigateTo('/');
   } catch (e) {
     console.error(e);
     toast.add({
