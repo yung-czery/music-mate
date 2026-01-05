@@ -3,7 +3,7 @@ definePageMeta({
   middleware: 'auth',
 });
 
-const { data, refresh } = useFetch<Playlist[]>('api/playlists', {
+const { data, refresh, pending } = useFetch<Playlist[]>('api/playlists', {
   key: 'user-playlists',
 });
 
@@ -83,7 +83,11 @@ const links = ref([
     <UPageHeader title="Twoje Playlisty" :links="links"/>
 
     <UPageBody>
-      <UPageGrid>
+      <UPageGrid v-if="pending">
+        <USkeleton v-for="n in 6" :key="n" class="h-64 w-full rounded-lg" />
+      </UPageGrid>
+
+      <UPageGrid v-else-if="data && data.length > 0">
         <PlaylistCard
             v-for="playlist in data"
             :key="playlist.id"
@@ -91,6 +95,13 @@ const links = ref([
             @remove="handleDelete"
         />
       </UPageGrid>
+
+      <PlaylistEmpty
+          v-else
+          title="Nie masz jeszcze żadnych playlist"
+          description="Stwórz swoją pierwszą playlistę lub zaimportuj je ze Spotify."
+          :playlist-link="false"
+      />
     </UPageBody>
 
     <LazyPlaylistAddModal
