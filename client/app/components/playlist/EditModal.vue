@@ -12,6 +12,7 @@ const toast = useToast();
 const router = useRouter();
 const loadingEdit = ref(false);
 const loadingDelete = ref(false);
+const confirmDeleteOpen = ref(false);
 
 const schema = z.object({
   name: z.string('Nazwa jest wymagana'),
@@ -55,9 +56,6 @@ const handleSubmit = async (event: FormSubmitEvent<Schema>) => {
 };
 
 const handleDelete = async () => {
-  if (!confirm('Czy na pewno chcesz bezpowrotnie usunąć tę playlistę?')) {
-    return;
-  }
   loadingDelete.value = true;
 
   try {
@@ -111,10 +109,17 @@ const handleDelete = async () => {
 
       <UButton
           label="Usuń playlistę" block class="mt-4" color="error" variant="outline" icon="i-lucide-trash"
-          @click="handleDelete"
+          @click="confirmDeleteOpen = true;"
       />
     </template>
   </UModal>
+
+  <LazyConfirmModal
+      v-model:open="confirmDeleteOpen"
+      title="Usuń playlistę"
+      description="Czy na pewno chcesz bezpowrotnie usunąć tę playlistę? Tej operacji nie można cofnąć."
+      @confirm="handleDelete"
+  />
 </template>
 
 <style scoped>

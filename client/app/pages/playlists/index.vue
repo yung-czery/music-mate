@@ -10,6 +10,8 @@ const { data: playlists, refresh, pending } = useFetch<Playlist[]>('api/playlist
 const auth = useAuthStore();
 const toast = useToast();
 const addModalOpen = ref(false);
+const confirmDeleteOpen = ref(false);
+const playlistIdToDelete = ref<string | null>(null);
 
 const handleImport = async () => {
   try {
@@ -43,12 +45,18 @@ const handleImport = async () => {
   }
 };
 
-const handleDelete = async (playlistId: string) => {
-  if (!confirm('Czy na pewno chcesz bezpowrotnie usunąć tę playlistę?')) {
-    return;
-  }
+const onRemoveClick = (playlistId: string) => {
+  playlistIdToDelete.value = playlistId;
+  confirmDeleteOpen.value = true;
+};
+
+const handleDelete = async () => {
+  if (!playlistIdToDelete.value) return;
+
+  const id = playlistIdToDelete.value;
+
   try {
-    await $fetch(`/api/playlists/${playlistId}`, {
+    await $fetch(`/api/playlists/${id}`, {
       method: 'DELETE',
     });
     await refresh();
@@ -56,6 +64,8 @@ const handleDelete = async (playlistId: string) => {
   } catch (e) {
     console.error(e);
     toast.add({ title: 'Błąd podczas usuwania playlisty', color: 'error', icon: 'i-heroicons-x-circle' });
+  } finally {
+    playlistIdToDelete.value = null;
   }
 };
 
@@ -84,7 +94,7 @@ const links = ref([
 
     <UPageBody>
       <UPageGrid v-if="pending">
-        <USkeleton v-for="n in 6" :key="n" class="h-64 w-full rounded-lg" />
+        <USkeleton v-for="n in 6" :key="n" class="h-64 w-full rounded-lg"/>
       </UPageGrid>
 
       <UPageGrid v-else-if="playlists && playlists.length > 0">
@@ -92,7 +102,7 @@ const links = ref([
             v-for="playlist in playlists"
             :key="playlist.id"
             :playlist="playlist"
-            @remove="handleDelete"
+            @remove="onRemoveClick"
         />
       </UPageGrid>
 
@@ -107,6 +117,13 @@ const links = ref([
     <LazyPlaylistAddModal
         v-model:open="addModalOpen"
         @success="refresh"
+    />
+
+    <LazyConfirmModal
+        v-model:open="confirmDeleteOpen"
+        title="Usuń playlistę"
+        description="Czy na pewno chcesz usunąć tę playlistę? Nie będziesz mógł jej odzyskać."
+        @confirm="handleDelete"
     />
   </UPage>
 </template>
