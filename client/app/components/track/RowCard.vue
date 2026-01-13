@@ -38,11 +38,18 @@ const onRowClick = (trackId: string) => {
     </div>
 
     <div class="flex items-center gap-3 flex-1 min-w-0" @click="onRowClick(track.spotifyId)">
-      <img
-          :src="track.coverUrl || '/placeholder.png'"
-          alt="Cover"
-          class="w-10 h-10 rounded object-cover bg-gray-200 shrink-0 shadow-sm cursor-pointer hover:opacity-80 transition-opacity"
-      >
+      <div class="relative w-10 h-10 shrink-0">
+        <NuxtImg
+            :src="track.coverUrl || '/placeholder.png'"
+            alt="Cover"
+            width="64"
+            height="64"
+            format="webp"
+            loading="lazy"
+            class="w-full h-full rounded object-cover shadow-sm hover:opacity-80 transition-opacity bg-gray-200 dark:bg-gray-800"
+            placeholder
+        />
+      </div>
 
       <div class="min-w-0 flex-1">
         <p class="font-medium text-gray-900 dark:text-gray-100 truncate text-sm">

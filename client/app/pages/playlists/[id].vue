@@ -2,7 +2,7 @@
 const route = useRoute();
 const playlistId = route.params.id as string;
 
-const { data: playlist, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`, {
+const { data: playlist, refresh, status } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`, {
   key: `playlist-${playlistId}`,
 });
 
@@ -97,16 +97,6 @@ const handleRemoveTrack = async (trackId: string) => {
         :links="links"
     />
 
-    <UPageList>
-      <TrackRowCard
-          v-for="(item, index) in playlist?.tracks as Track[]"
-          :key="item.id"
-          :index="index"
-          :track="item"
-          @remove="handleRemoveTrack"
-      />
-    </UPageList>
-
     <PlaylistEmpty
         v-if="!playlist?.tracks.length && !playlist.spotifyId"
         title="Brak utworów"
@@ -124,6 +114,27 @@ const handleRemoveTrack = async (trackId: string) => {
       </UButton>
     </UContainer>
 
+    <UScrollArea
+        v-else
+        v-slot="{ item, index }"
+        :items="playlist?.tracks || []"
+        orientation="vertical"
+        :virtualize="{
+      gap: 16,
+      lanes: 1,
+      estimateSize: 64,
+      overscan: 5,
+    }"
+        class="h-[calc(100vh-300px)] w-full playlist-scroll"
+    >
+      <TrackRowCard
+          :key="(item as Track).id"
+          :index="index"
+          :track="item as Track"
+          @remove="handleRemoveTrack"
+      />
+    </UScrollArea>
+
     <LazyPlaylistEditModal
         v-model:open="editModalOpen"
         :playlist="playlist"
@@ -133,5 +144,27 @@ const handleRemoveTrack = async (trackId: string) => {
 </template>
 
 <style scoped>
+.playlist-scroll:deep(::-webkit-scrollbar) {
+  width: 8px;
+}
 
+.playlist-scroll:deep(::-webkit-scrollbar-track) {
+  background: transparent;
+}
+
+.playlist-scroll:deep(::-webkit-scrollbar-thumb) {
+  background-color: #3f3f46;
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.playlist-scroll:deep(::-webkit-scrollbar-thumb:hover) {
+  background-color: #71717a;
+}
+
+.playlist-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #3f3f46 transparent;
+}
 </style>
