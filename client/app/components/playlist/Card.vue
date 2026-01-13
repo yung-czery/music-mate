@@ -4,7 +4,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'remove', trackId: string): void;
+  (e: 'remove', playlistId: string): void;
 }>();
 
 const coverImages = computed(() => {
@@ -75,23 +75,29 @@ const gradientClass = computed(() => {
     >
 
       <div v-if="isGrid" class="grid grid-cols-2 grid-rows-2 w-full h-full">
-        <img
+        <NuxtImg
             v-for="(img, index) in coverImages"
             :key="index"
             :src="img"
+            width="160"
+            height="160"
+            format="webp"
+            loading="lazy"
             alt=""
             class="w-full h-full object-cover"
-            loading="lazy"
-        >
+        />
       </div>
 
-      <img
+      <NuxtImg
           v-else-if="coverImages.length > 0"
           :src="coverImages[0]"
+          width="400"
+          height="400"
+          format="webp"
+          loading="lazy"
           alt="Okładka"
           class="w-full h-full object-cover"
-          loading="lazy"
-      >
+      />
 
       <div v-else class="absolute inset-0 flex items-center justify-center bg-linear-to-br" :class="gradientClass">
         <UIcon name="i-heroicons-musical-note" class="size-16 text-white/80 drop-shadow-md"/>
