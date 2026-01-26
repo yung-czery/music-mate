@@ -98,6 +98,7 @@ npm run dev
 
 
 *Serwer API uruchomi się pod adresem: http://localhost:3000*
+
 2. Start Frontend (w folderze głównym/client):
 ```bash
 npm run dev
