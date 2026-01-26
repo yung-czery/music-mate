@@ -129,7 +129,7 @@ npm run dev
 ## 5. Kod i konfiguracja
 
 **Repozytorium:**
-Link do repozytorium: `https://github.com/twoj-user/musicmate`
+Link do repozytorium: `https://github.com/yung-czery/music-mate`
 
 **Przykłady konfiguracji (`.env`):**
 
