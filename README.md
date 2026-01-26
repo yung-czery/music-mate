@@ -76,9 +76,10 @@ npm install
 
 
 4. **Konfiguracja Bazy Danych:**
-   W katalogu `server` uruchom migracje Prisma, aby utworzyć tabele:
+   W katalogu `server` uruchom migracje Prisma, aby utworzyć tabele oraz klienta Prisma:
 ```bash
-npx prisma migrate dev --name init
+npx prisma db push
+npx prisma generate
 
 ```
 
