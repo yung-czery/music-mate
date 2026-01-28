@@ -41,7 +41,7 @@ export const search = async (req: Request, res: Response): Promise<void> => {
 
 export const loginToSpotify = (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    const userId = req.user?.userId as string;
 
     const spotifyUrl = spotifyService.getAuthorizationUrl(userId);
 
