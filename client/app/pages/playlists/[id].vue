@@ -2,7 +2,7 @@
 const route = useRoute();
 const playlistId = route.params.id as string;
 
-const { data: playlist, refresh } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`, {
+const { data: playlist, refresh, status } = useFetch<Playlist>(`/api/playlists/${useRoute().params.id}`, {
   key: `playlist-${playlistId}`,
 });
 

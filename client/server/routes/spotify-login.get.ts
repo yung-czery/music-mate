@@ -1,24 +1,13 @@
-export default defineEventHandler(async (event) => {
-  const token = getCookie(event, 'jwt'); // Pobieranie tokenu JWT
+export default defineEventHandler((event) => {
+  const config = useRuntimeConfig();
+
+  const token = getCookie(event, 'jwt');
 
   if (!token) {
     return sendRedirect(event, '/?import=error', 302);
   }
 
-  try {
-    // Nuxt pyta Backend o URL autoryzacji
-    const response = await $fetch<{ url: string }>(`/api/spotify/login`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`, // Token JWT jest wysyłany w nagłówku
-      }
-    });
+  const backendUrl = `${config.public.apiUrl}/api/spotify/login?token=${token}`;
 
-    // Backend zwrócił URL, przekierowujemy tam użytkownika
-    return sendRedirect(event, response.url, 302);
-
-  } catch (error) {
-    console.error('Błąd komunikacji z backendem:', error);
-    return sendRedirect(event, '/?import=error', 302);
-  }
+  return sendRedirect(event, backendUrl, 302);
 })
