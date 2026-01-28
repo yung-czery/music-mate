@@ -40,11 +40,17 @@ export const search = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const loginToSpotify = (req: Request, res: Response) => {
-  const userId = req.user?.userId as string;
+  try {
+    const userId = req.user?.userId as string;
 
-  const url = spotifyService.getAuthorizationUrl(userId);
+    const spotifyUrl = spotifyService.getAuthorizationUrl(userId);
 
-  res.redirect(url);
+    res.json({
+      url: spotifyUrl
+    });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to generate URL' });
+  }
 };
 
 export const spotifyCallback = async (req: Request, res: Response): Promise<void> => {
