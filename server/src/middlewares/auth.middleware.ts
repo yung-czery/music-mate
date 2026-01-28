@@ -7,8 +7,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 export const authenticateToken = (req: Request, res: Response, next: NextFunction): void => {
   const token =
     req.cookies?.jwt ||
-    req.headers.authorization?.split(' ')[1] ||
-    (req.query.token as string);
+    req.headers.authorization?.split(' ')[1]
 
   if (!token) {
     res.status(401).json({ error: 'Access denied' });
